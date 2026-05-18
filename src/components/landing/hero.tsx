@@ -64,17 +64,17 @@ export function Hero({ sellerAddress }: HeroProps) {
           <Stat
             label="end-to-end"
             value="~3s"
-            sub="402 → sign → 200 + tx hash"
+            sub="sequencer-confirmed, L2"
           />
           <Stat
             label="seller cost / call"
-            value="≈ $0.0003"
-            sub="base gas, facilitator pays"
+            value="~$0.001-0.01"
+            sub="base mainnet gas, facilitator pays"
           />
           <Stat
             label="buyer gas / call"
             value="$0"
-            sub="signed off-chain"
+            sub="EIP-3009 signed off-chain"
           />
           <Stat
             label="precision"
@@ -82,6 +82,11 @@ export function Hero({ sellerAddress }: HeroProps) {
             sub="USDC atomic units"
           />
         </dl>
+        <p className="text-[10.5px] text-[var(--x-text-subtle)] font-mono mt-3">
+          Testnet values free; mainnet ranges shown. Facilitator pricing
+          shifts between testnet (free) and mainnet (varies). L1 finality
+          on Base typically lands within minutes via batched posting.
+        </p>
       </div>
     </section>
   );

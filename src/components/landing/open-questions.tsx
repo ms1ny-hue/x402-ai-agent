@@ -5,44 +5,76 @@ interface Question {
 
 const questions: Question[] = [
   {
+    q: "Circle can freeze a USDC address. How is that handled?",
+    a: "It is not, at the protocol layer. If the seller's address is blacklisted by Circle, future incoming transfers revert; existing balance is locked. Mitigation: rotate seller addresses, off-ramp to fiat frequently, and treat USDC balances as hot wallets, not store-of-value.",
+  },
+  {
+    q: "USDC depeg risk?",
+    a: "USDC briefly traded at ~$0.87 in March 2023. If the unit of account on the rail breaks from USD, both buyers and sellers carry FX risk between authorization and settlement. For very-low-value calls (sub-cent) the risk is immaterial. For larger flows, hedge or off-ramp same-day.",
+  },
+  {
+    q: "Base sequencer is centralized. What if it halts?",
+    a: "Base's sequencer is operated by Coinbase and has experienced multi-hour delays. During a halt, no new x402 settlements complete on Base. Mitigation: support multiple chains (Base, Solana, Stellar, etc.) and route around incidents at the facilitator level.",
+  },
+  {
+    q: "Sequencer-confirmed vs L1-final?",
+    a: "What this demo reports as 'settled' is sequencer-confirmed. L1 finality on Base typically lands within minutes via posted batches. For high-value flows you should wait for L1 finality before treating the payment as irrevocable.",
+  },
+  {
     q: "Chargebacks?",
-    a: "None at the protocol layer. Build an off-chain dispute process if your audience needs one. Agent-to-API contexts typically don't.",
+    a: "None at the protocol layer. Build an off-chain dispute process if your audience needs one. Agent-to-API contexts typically don't; consumer contexts almost certainly do.",
   },
   {
     q: "KYC / AML / sanctions?",
-    a: "Not handled by the protocol. Operator layers on KYT (Chainalysis, TRM), sanctions-list blocking by address, etc. Same posture as any USDC payments product.",
+    a: "Not handled by the protocol. Operator must add KYT (Chainalysis, TRM), OFAC-list blocking by address, and adverse-media screening. Same posture as any USDC payments product.",
+  },
+  {
+    q: "Am I a money transmitter if I accept USDC?",
+    a: "Possibly, depending on jurisdiction. FinCEN guidance generally treats convertible virtual currency businesses as MSBs. State-level MTLs may apply if you hold customer funds. Get counsel before scaling. Accepting payment for your own services is usually treated differently from transmitting on behalf of third parties.",
+  },
+  {
+    q: "OFAC screening obligation?",
+    a: "Yes. Sanctioned address lists from OFAC must be checked, and there is precedent for enforcement against crypto businesses. Screen incoming buyer addresses against the SDN list, log decisions, and document your control.",
+  },
+  {
+    q: "Tax treatment of USDC receipts?",
+    a: "In the US, USDC received as payment is income at fair value on the date of receipt, and any subsequent fluctuation is a capital gain/loss event on conversion. Same treatment as other cryptocurrency receipts. Tax compliance is on the operator.",
   },
   {
     q: "Refunds?",
-    a: "A USDC counter-payment from seller to buyer. No native primitive; one extra Transfer call.",
+    a: "A USDC counter-payment from seller to buyer. No native primitive; one extra Transfer call. No automated dispute resolution if the seller refuses to refund.",
   },
   {
-    q: "Who is the facilitator?",
-    a: "Here, Coinbase at x402.org. Verifies the buyer's EIP-3009 signature and broadcasts the on-chain settlement. Multiple facilitators exist; sellers can switch.",
+    q: "Who is the facilitator? What if they change pricing?",
+    a: "Here, Coinbase at x402.org (free on testnet). Mainnet uses api.cdp.coinbase.com/platform/v2/x402, and fees may apply. Other facilitators (PayAI, others) exist; the protocol does not bind you to one.",
   },
   {
-    q: "Facilitator outage?",
-    a: "Payments fail until recovery or you switch. Multi-facilitator fallback is solvable at the seller layer.",
-  },
-  {
-    q: "Subscriptions?",
-    a: "Per-call re-authorization for agents, or use the batch-settlement scheme where a buyer funds a channel and signs off-chain vouchers.",
+    q: "Subscriptions and recurring payments?",
+    a: "Per-call re-authorization for agents (simple, gas-cheap on L2). For high-frequency flows use the batch-settlement scheme where a buyer funds a channel and signs off-chain vouchers redeemed by the seller in batches.",
   },
   {
     q: "Practical price floor?",
-    a: "~100 atomic USDC ($0.0001) before facilitator math gets uncomfortable. Above ~$0.001 the rail is comfortable.",
+    a: "~100 atomic USDC ($0.0001) before facilitator math gets uncomfortable. Above ~$0.001 the rail is comfortable. Below that, batch-settlement is the right pattern.",
+  },
+  {
+    q: "Wallet custody and key compromise?",
+    a: "Both wallets are Coinbase CDP server-managed. Secrets live in Vercel env vars, never in this repo. Production: rate-limit per buyer, anomaly detection, minimal hot balance, plus an off-chain off-ramp to cold storage.",
+  },
+  {
+    q: "Address poisoning, phishing, wrong-address attacks?",
+    a: "x402 binds payments to the seller's payTo at signature time, so a buyer cannot accidentally pay the wrong address mid-flow. Phishing remains a risk if a malicious server advertises a fraudulent payTo in its accepts[] array; verify endpoints over TLS and check responses against expected sellers.",
+  },
+  {
+    q: "MEV / front-running?",
+    a: "Nothing to front-run. Amount is fixed in the signed authorization. Buyer pays no gas; facilitator does. Settlement is a plain ERC-20 Transfer with no extractable value to a third party.",
+  },
+  {
+    q: "PCI scope?",
+    a: "Genuinely reduced. No card data ever touches your servers. You still need infrastructure security, custody controls, and the compliance items above, but the PCI-DSS card-data scope drops to near zero.",
   },
   {
     q: "Is the LLM research output real?",
     a: "No. The research, commentary, and backtest tools return deterministic synthetic strings. The PAYMENT is real (signed authorization, on-chain Transfer, verifiable on Basescan). Content is illustrative scaffolding.",
-  },
-  {
-    q: "Wallet custody risk?",
-    a: "Both wallets are Coinbase CDP server-managed. Secrets live in Vercel env vars, never in this repo. Production: rate-limit per buyer, anomaly detection, keep balances minimal.",
-  },
-  {
-    q: "MEV / front-running?",
-    a: "Nothing to front-run. The amount is fixed in the signed authorization. Buyer pays no gas; facilitator does. Settlement is a plain ERC-20 Transfer.",
   },
 ];
 

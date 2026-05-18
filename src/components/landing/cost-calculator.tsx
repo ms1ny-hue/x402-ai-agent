@@ -32,8 +32,8 @@ export function CostCalculator() {
   const x402Fees = calls * (price * X402_FACILITATOR_BPS + X402_GAS_PER_CALL);
   const pspMarginalPct = principal > 0 ? (pspFees / principal) * 100 : 0;
   const x402MarginalPct = principal > 0 ? (x402Fees / principal) * 100 : 0;
-  const savings = pspFees - x402Fees;
   const pspViable = price >= 0.5;
+  const savings = pspViable ? pspFees - x402Fees : 0;
 
   return (
     <section id="economics" className="border-b border-[var(--x-border)]">
@@ -79,19 +79,22 @@ export function CostCalculator() {
           </div>
 
           <div className="grid sm:grid-cols-2 gap-px bg-[var(--x-border)]">
-            <ResultCard
-              label="Card-network PSP"
-              accent="var(--x-text)"
-              principal={principal}
-              fees={pspFees}
-              marginalPct={pspMarginalPct}
-              note={
-                pspViable
-                  ? "Within typical PSP economics."
-                  : "Per-call price < $0.50: fixed component dominates. Unit economics break."
-              }
-              warn={!pspViable}
-            />
+            {pspViable ? (
+              <ResultCard
+                label="Card-network PSP"
+                accent="var(--x-text)"
+                principal={principal}
+                fees={pspFees}
+                marginalPct={pspMarginalPct}
+                note="Within typical online card-not-present economics."
+                warn={false}
+              />
+            ) : (
+              <NotViableCard
+                label="Card-network PSP"
+                principal={principal}
+              />
+            )}
             <ResultCard
               label="x402 (USDC on Base)"
               accent="var(--x-accent)"
@@ -100,8 +103,8 @@ export function CostCalculator() {
               marginalPct={x402MarginalPct}
               note={
                 price < 0.0001
-                  ? "Below 100 atomic USDC. Facilitator math breaks."
-                  : "Within typical x402 economics."
+                  ? "Below 100 atomic USDC. Use batch-settlement instead."
+                  : "Within typical x402 economics on Base mainnet."
               }
               warn={price < 0.0001}
             />
@@ -111,21 +114,70 @@ export function CostCalculator() {
         <div className="mt-px bg-black text-[var(--x-chrome-1)] border border-[var(--x-border)] border-t-0 p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div>
             <div className="text-[10px] uppercase tracking-[0.22em] text-[var(--x-text-subtle)] font-mono mb-1">
-              Monthly delta
+              {pspViable ? "Monthly delta" : "Verdict"}
             </div>
             <div className="font-serif text-3xl md:text-4xl tabular-nums chrome-text">
-              {savings >= 0 ? "x402 saves " : "PSP saves "}
-              {formatUsd(Math.abs(savings))}
+              {pspViable
+                ? `${savings >= 0 ? "x402 saves " : "PSP saves "}${formatUsd(Math.abs(savings))}`
+                : "Use case not viable on card rails"}
             </div>
           </div>
           <div className="text-[12px] text-[var(--x-text-subtle)] max-w-md leading-relaxed font-mono">
-            Directional comparison. Real PSP rates depend on MCC, region,
-            contract tier. Real x402 fees depend on facilitator pricing
-            and chain gas at settlement.
+            {pspViable
+              ? "Directional. Real PSP rates depend on MCC, region, contract tier. Real x402 fees depend on facilitator pricing and chain gas at settlement."
+              : "At this per-call price the PSP fixed component alone exceeds the principal. The interesting question is not how much x402 saves; it is that the use case only exists on x402-style rails."}
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+function NotViableCard({
+  label,
+  principal,
+}: {
+  label: string;
+  principal: number;
+}) {
+  return (
+    <div className="bg-[var(--x-bg-elevated)] p-5 flex flex-col gap-3">
+      <div className="flex items-center gap-2">
+        <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+        <div className="text-[10px] uppercase tracking-[0.22em] text-[var(--x-text-subtle)] font-mono">
+          {label}
+        </div>
+      </div>
+      <div>
+        <div className="text-[10px] uppercase tracking-[0.22em] text-[var(--x-text-subtle)] font-mono mb-1">
+          Fees / month
+        </div>
+        <div className="font-serif text-3xl md:text-4xl tabular-nums leading-none text-amber-300">
+          Not viable
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-3 text-xs font-mono">
+        <div>
+          <div className="text-[10px] uppercase tracking-[0.22em] text-[var(--x-text-subtle)] mb-1">
+            Principal
+          </div>
+          <div className="tabular-nums text-[var(--x-text)]">
+            {formatUsd(principal)}
+          </div>
+        </div>
+        <div>
+          <div className="text-[10px] uppercase tracking-[0.22em] text-[var(--x-text-subtle)] mb-1">
+            Effective
+          </div>
+          <div className="tabular-nums text-amber-300">{"> 100%"}</div>
+        </div>
+      </div>
+      <p className="text-[11px] leading-relaxed mt-1 font-mono text-amber-300">
+        Per-call price below ~$0.50. The $0.30 PSP fixed component alone
+        exceeds the principal on most calls. Card rails cannot serve this
+        use case at unit economics that work.
+      </p>
+    </div>
   );
 }
 

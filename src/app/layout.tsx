@@ -77,6 +77,9 @@ export default function RootLayout({
                 <Link href="#spec" className="hidden md:inline hover:text-[var(--x-text)]">
                   Spec
                 </Link>
+                <Link href="#trust" className="hidden md:inline hover:text-[var(--x-text)]">
+                  Trust
+                </Link>
                 <Link href="#economics" className="hidden md:inline hover:text-[var(--x-text)]">
                   Economics
                 </Link>
