@@ -19,7 +19,6 @@ const jetbrainsMono = JetBrains_Mono({
 const fraunces = Fraunces({
   variable: "--font-serif",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "700"],
   style: ["normal", "italic"],
   axes: ["opsz", "SOFT"],
 });
