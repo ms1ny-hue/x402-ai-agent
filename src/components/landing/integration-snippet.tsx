@@ -45,7 +45,7 @@ const tools = await mcp.tools();
 
 export function IntegrationSnippet() {
   return (
-    <section id="integrate" className="border-b border-[var(--x-border)]">
+    <section id="integrate" data-reveal className="border-b border-[var(--x-border)]">
       <div className="max-w-6xl mx-auto px-5 py-12 md:py-16">
         <div className="flex items-baseline justify-between flex-wrap gap-3 mb-6">
           <div>

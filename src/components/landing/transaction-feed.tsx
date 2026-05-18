@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useCountUp } from "@/lib/hooks/use-count-up";
 
 interface TxRecord {
   txHash: string;
@@ -88,7 +89,7 @@ export function TransactionFeed() {
   }, []);
 
   return (
-    <section id="payments" className="border-b border-[var(--x-border)] bg-[var(--x-bg-elevated)]">
+    <section id="payments" data-reveal className="border-b border-[var(--x-border)] bg-[var(--x-bg-elevated)]">
       <div className="max-w-6xl mx-auto px-5 py-12 md:py-16">
         <div className="flex items-baseline justify-between flex-wrap gap-3 mb-6">
           <div>
@@ -300,13 +301,28 @@ function BigStat({
   suffix?: string;
   sub: string;
 }) {
+  // Parse the number out of value if possible and animate it.
+  const numeric = Number(value);
+  const hasNumber = Number.isFinite(numeric);
+  const decimals =
+    value.includes(".") ? value.split(".")[1]?.length ?? 0 : 0;
+  const animated = useCountUp(hasNumber ? numeric : 0, {
+    duration: 1100,
+    decimals,
+  });
+  const display = hasNumber
+    ? animated.toLocaleString(undefined, {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+      })
+    : value;
   return (
     <div className="bg-[var(--x-bg)] p-4">
       <div className="text-[10px] uppercase tracking-[0.22em] text-[var(--x-text-subtle)] font-mono mb-2">
         {label}
       </div>
       <div className="font-serif text-2xl md:text-3xl leading-none mb-1.5 tabular-nums chrome-text">
-        {value}
+        {display}
         {suffix && (
           <span className="text-[var(--x-text-subtle)] font-mono text-base ml-1">
             {suffix}

@@ -52,6 +52,7 @@ export function TrustAssumptions() {
   return (
     <section
       id="trust"
+      data-reveal
       className="border-b border-[var(--x-border)] bg-[var(--x-bg-elevated)]"
     >
       <div className="max-w-6xl mx-auto px-5 py-12 md:py-16">

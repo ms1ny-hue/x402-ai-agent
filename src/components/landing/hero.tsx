@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { HandshakeDiagram } from "@/components/landing/handshake-diagram";
 
 interface HeroProps {
   sellerAddress: string;
@@ -8,11 +9,14 @@ export function Hero({ sellerAddress }: HeroProps) {
   return (
     <section className="border-b border-[var(--x-border)] relative overflow-hidden scanlines">
       <div className="absolute inset-0 dot-grid opacity-60 pointer-events-none" />
-      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_20%_-10%,rgba(125,211,252,0.16),transparent_55%),radial-gradient(circle_at_85%_110%,rgba(228,228,231,0.06),transparent_55%)]" />
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_15%_-10%,rgba(125,211,252,0.18),transparent_55%),radial-gradient(circle_at_85%_110%,rgba(228,228,231,0.06),transparent_55%)]" />
 
-      <div className="max-w-6xl mx-auto px-5 pt-14 pb-12 md:pt-20 md:pb-16 relative">
+      <div className="max-w-6xl mx-auto px-5 pt-12 pb-12 md:pt-16 md:pb-16 relative stage">
         {/* Top instrument label */}
-        <div className="flex items-center justify-between mb-8 text-[10px] font-mono uppercase tracking-[0.28em] text-[var(--x-text-subtle)]">
+        <div
+          className="stage-item flex items-center justify-between mb-8 text-[10px] font-mono uppercase tracking-[0.28em] text-[var(--x-text-subtle)]"
+          style={{ ["--i" as unknown as string]: 0 }}
+        >
           <div className="flex items-center gap-2">
             <span className="text-[var(--x-accent)]">◢</span>
             <span>protocol surface · live</span>
@@ -23,84 +27,107 @@ export function Hero({ sellerAddress }: HeroProps) {
           </div>
         </div>
 
-        <div className="bracket-panel relative pl-3 pr-3 pt-6 pb-6 mb-10">
-          <span className="bracket-tr" />
-          <span className="bracket-bl" />
+        <div className="grid lg:grid-cols-[1.15fr_1fr] gap-6 lg:gap-10 items-start">
+          {/* LEFT: text column */}
+          <div>
+            <div
+              className="bracket-panel relative pl-3 pr-3 pt-6 pb-6 mb-8 stage-item"
+              style={{ ["--i" as unknown as string]: 1 }}
+            >
+              <span className="bracket-tr" />
+              <span className="bracket-bl" />
 
-          <div className="flex flex-wrap gap-x-3 gap-y-1.5 items-center mb-6 text-[10px] uppercase tracking-[0.28em] text-[var(--x-text-muted)] font-mono">
-            <span className="text-[var(--x-text-subtle)]">⌗</span>
-            <span>http 402</span>
-            <span className="text-[var(--x-text-subtle)]">/</span>
-            <span>eip-3009 transferWithAuthorization</span>
-            <span className="text-[var(--x-text-subtle)]">/</span>
-            <span>usdc v2</span>
-            <span className="text-[var(--x-text-subtle)]">/</span>
-            <span>caip-2 eip155:84532</span>
+              <div className="flex flex-wrap gap-x-3 gap-y-1.5 items-center mb-5 text-[10px] uppercase tracking-[0.28em] text-[var(--x-text-muted)] font-mono">
+                <span className="text-[var(--x-text-subtle)]">⌗</span>
+                <span>http 402</span>
+                <span className="text-[var(--x-text-subtle)]">/</span>
+                <span>eip-3009</span>
+                <span className="text-[var(--x-text-subtle)]">/</span>
+                <span>usdc v2</span>
+                <span className="text-[var(--x-text-subtle)]">/</span>
+                <span>eip155:84532</span>
+              </div>
+
+              <h1
+                className="font-serif text-[clamp(2.2rem,5.6vw,4.6rem)] leading-[0.92] tracking-[-0.035em] mb-2"
+                style={{
+                  fontVariationSettings: '"opsz" 144, "SOFT" 100',
+                  fontWeight: 400,
+                }}
+              >
+                <span className="chrome-text">Per-call settlement,</span>
+                <br />
+                <span
+                  className="italic text-[var(--x-text-muted)]"
+                  style={{ fontVariationSettings: '"opsz" 144, "SOFT" 50' }}
+                >
+                  over plain
+                </span>{" "}
+                <span
+                  className="not-italic chrome-text"
+                  style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
+                >
+                  HTTP.
+                </span>
+              </h1>
+
+              <p className="text-sm md:text-base text-[var(--x-text-muted)] leading-relaxed mt-5 font-mono">
+                Buyer hits a paid endpoint. Server returns{" "}
+                <code className="text-[var(--x-accent)]">402</code> with an{" "}
+                <code className="text-[var(--x-accent)]">accepts</code>{" "}
+                array. Buyer signs an EIP-3009 USDC authorization off-chain.
+                Facilitator verifies and broadcasts the on-chain settlement.
+                Resource returned with the tx hash. No card. No merchant
+                account. No checkout.
+              </p>
+            </div>
+
+            <div
+              className="flex flex-wrap gap-2 mb-10 stage-item"
+              style={{ ["--i" as unknown as string]: 2 }}
+            >
+              <Link
+                href="#demo"
+                className="rounded-sm bg-gradient-to-b from-[var(--x-chrome-1)] via-[var(--x-chrome-2)] to-[var(--x-chrome-4)] text-black px-5 py-2.5 text-[11px] font-mono uppercase tracking-[0.22em] hover:from-[var(--x-accent)] hover:to-[var(--x-accent-bright)] hover:text-black transition-colors shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]"
+              >
+                Trigger a payment →
+              </Link>
+              <Link
+                href="#spec"
+                className="rounded-sm border border-[var(--x-border-bright)] text-[var(--x-text)] px-5 py-2.5 text-[11px] font-mono uppercase tracking-[0.22em] hover:border-[var(--x-accent)] hover:text-[var(--x-accent)] transition-colors"
+              >
+                Spec sheet
+              </Link>
+              <Link
+                href="#trust"
+                className="rounded-sm border border-[var(--x-border-bright)] text-[var(--x-text)] px-5 py-2.5 text-[11px] font-mono uppercase tracking-[0.22em] hover:border-[var(--x-accent)] hover:text-[var(--x-accent)] transition-colors"
+              >
+                Trust assumptions
+              </Link>
+              <Link
+                href={`https://sepolia.basescan.org/address/${sellerAddress}`}
+                target="_blank"
+                className="rounded-sm border border-[var(--x-border-bright)] text-[var(--x-text-muted)] px-5 py-2.5 text-[11px] font-mono hover:border-[var(--x-accent)] hover:text-[var(--x-accent)] transition-colors"
+              >
+                Seller wallet ↗
+              </Link>
+            </div>
           </div>
 
-          <h1
-            className="font-serif text-[clamp(2.4rem,7vw,5.6rem)] leading-[0.92] tracking-[-0.035em] mb-2"
-            style={{
-              fontVariationSettings: '"opsz" 144, "SOFT" 100',
-              fontWeight: 400,
-            }}
+          {/* RIGHT: live handshake showpiece */}
+          <div
+            className="stage-item lg:sticky lg:top-24"
+            style={{ ["--i" as unknown as string]: 3 }}
           >
-            <span className="chrome-text">Per-call settlement,</span>
-            <br />
-            <span
-              className="italic text-[var(--x-text-muted)]"
-              style={{ fontVariationSettings: '"opsz" 144, "SOFT" 50' }}
-            >
-              over plain
-            </span>{" "}
-            <span
-              className="not-italic chrome-text"
-              style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
-            >
-              HTTP.
-            </span>
-          </h1>
-
-          <p className="text-sm md:text-base text-[var(--x-text-muted)] max-w-3xl leading-relaxed mt-6 font-mono">
-            Buyer hits a paid endpoint. Server returns{" "}
-            <code className="text-[var(--x-accent)]">402</code> with an{" "}
-            <code className="text-[var(--x-accent)]">accepts</code> array.
-            Buyer signs an EIP-3009 USDC authorization off-chain. Facilitator
-            verifies and broadcasts the on-chain settlement. Resource is
-            returned with the tx hash. No card. No merchant account. No
-            checkout.
-          </p>
+            <HandshakeDiagram />
+          </div>
         </div>
 
-        <div className="flex flex-wrap gap-2 mb-12">
-          <Link
-            href="#demo"
-            className="rounded-sm bg-gradient-to-b from-[var(--x-chrome-1)] via-[var(--x-chrome-2)] to-[var(--x-chrome-4)] text-black px-5 py-2.5 text-[11px] font-mono uppercase tracking-[0.22em] hover:from-[var(--x-accent)] hover:to-[var(--x-accent-bright)] hover:text-black transition-colors shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]"
-          >
-            Trigger a payment →
-          </Link>
-          <Link
-            href="#spec"
-            className="rounded-sm border border-[var(--x-border-bright)] text-[var(--x-text)] px-5 py-2.5 text-[11px] font-mono uppercase tracking-[0.22em] hover:border-[var(--x-accent)] hover:text-[var(--x-accent)] transition-colors"
-          >
-            Spec sheet
-          </Link>
-          <Link
-            href="#trust"
-            className="rounded-sm border border-[var(--x-border-bright)] text-[var(--x-text)] px-5 py-2.5 text-[11px] font-mono uppercase tracking-[0.22em] hover:border-[var(--x-accent)] hover:text-[var(--x-accent)] transition-colors"
-          >
-            Trust assumptions
-          </Link>
-          <Link
-            href={`https://sepolia.basescan.org/address/${sellerAddress}`}
-            target="_blank"
-            className="rounded-sm border border-[var(--x-border-bright)] text-[var(--x-text-muted)] px-5 py-2.5 text-[11px] font-mono hover:border-[var(--x-accent)] hover:text-[var(--x-accent)] transition-colors"
-          >
-            Seller wallet ↗
-          </Link>
-        </div>
-
-        <div className="bracket-panel relative">
+        {/* Stat strip spanning full width below */}
+        <div
+          className="bracket-panel relative mt-10 stage-item"
+          style={{ ["--i" as unknown as string]: 4 }}
+        >
           <span className="bracket-tr" />
           <span className="bracket-bl" />
           <dl className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[var(--x-border)] border border-[var(--x-border)]">
@@ -130,7 +157,10 @@ export function Hero({ sellerAddress }: HeroProps) {
             />
           </dl>
         </div>
-        <p className="text-[10px] text-[var(--x-text-subtle)] font-mono mt-4 leading-relaxed">
+        <p
+          className="text-[10px] text-[var(--x-text-subtle)] font-mono mt-4 leading-relaxed stage-item"
+          style={{ ["--i" as unknown as string]: 5 }}
+        >
           ⌗ testnet values free. mainnet ranges shown above. facilitator
           pricing shifts between testnet (free) and mainnet (varies). L1
           finality on Base typically lands within minutes via batched

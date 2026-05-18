@@ -36,7 +36,7 @@ export function CostCalculator() {
   const savings = pspViable ? pspFees - x402Fees : 0;
 
   return (
-    <section id="economics" className="border-b border-[var(--x-border)]">
+    <section id="economics" data-reveal className="border-b border-[var(--x-border)]">
       <div className="max-w-6xl mx-auto px-5 py-12 md:py-16">
         <div className="flex items-baseline justify-between flex-wrap gap-3 mb-6">
           <div>

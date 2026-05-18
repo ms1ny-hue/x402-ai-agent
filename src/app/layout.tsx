@@ -4,6 +4,7 @@ import "./globals.css";
 import Link from "next/link";
 import { DisclaimerBar } from "@/components/landing/disclaimer-bar";
 import { LiveTicker } from "@/components/landing/live-ticker";
+import { RevealOnScroll } from "@/components/landing/reveal-on-scroll";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -54,6 +55,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${jetbrainsMono.variable} ${fraunces.variable} antialiased bg-[var(--x-bg)] text-[var(--x-text)] brushed`}
       >
         <div className="min-h-full flex flex-col">
+          <RevealOnScroll />
           <DisclaimerBar />
           <LiveTicker />
           <header className="sticky top-0 z-40 backdrop-blur-md bg-[var(--x-bg)]/85 border-b border-[var(--x-border)]">
