@@ -1,84 +1,82 @@
-# x402 Next.js + AI Starter Kit
+# Agentic Research, Pay-Per-Call
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fx402-ai-starter&env=CDP_API_KEY_ID,CDP_API_KEY_SECRET,CDP_WALLET_SECRET&envDescription=Coinbase%20Developer%20Platform%20credentials%20are%20needed%20to%20create%20and%20fund%20server%20wallets&envLink=https%3A%2F%2Fdocs.cdp.coinbase.com%2Fapi-reference%2Fv2%2Fauthentication&project-name=x402-ai-starter&repository-name=x402-ai-starter&demo-title=x402%20AI%20Starter&demo-description=A%20fullstack%20template%20for%20using%20x402%20with%20MCP%20and%20AI%20SDK&demo-url=https%3A%2F%2Fx402-ai-starter.labs.vercel.dev%2F&demo-image=https%3A%2F%2Fx402-ai-starter.labs.vercel.dev%2Fscreenshot.png)
+A portfolio prototype that demonstrates the [x402](https://x402.org) HTTP payment protocol for AI agents. An LLM agent calls a small set of paid research tools, and a server-managed wallet pays each call in stablecoin (USDC on Base Sepolia testnet).
 
-![Screenshot of the app](./public/screenshot-small.png)
+Live demo: [x402-ai-agent-zeta.vercel.app](https://x402-ai-agent-zeta.vercel.app)
 
-[x402](https://x402.org) is a new protocol built on top of HTTP for doing fully accountless payments easily, quickly, cheaply and securely.
+## Why this matters
 
-This template built with [Next.js](https://nextjs.org), [AI SDK](https://ai-sdk.dev), [AI Elements](https://ai-elements.dev), and [AI Gateway](https://vercel.com/ai-gateway) and the [Coinbase CDP](https://docs.cdp.coinbase.com/) shows off using x402 with a modern AI stack.
+x402 is a payment rail for software, not for humans with cards. The interesting use case is not "crypto checkout" but agents paying APIs per call, where card-network fees and merchant onboarding would make the unit economics impossible.
 
-**Demo: [https://x402-ai-starter.vercel.app/](https://x402-ai-starter.vercel.app/)**
+| | Payment Service Providers (Stripe, etc.) | x402 |
+| --- | --- | --- |
+| Rails | Card networks, ACH | USDC on Base or Solana |
+| Fees | ~2.9% + 30¢ | Gas + small facilitator fee, often well under 1¢ |
+| Minimum viable charge | Around 50¢ before fees dominate | Fractions of a cent |
+| Settlement | T+1 to T+2 typical | Seconds, onchain |
+| Buyer | A human with a card on file | A wallet, often an AI agent |
+| Chargebacks, subscriptions, refunds | First-class | Not native, would be built separately |
 
-## Features
+For a PM coming out of payments, the framing that matters is that x402 opens a buyer class that PSPs cannot serve cheaply: software agents making sub-cent purchases without a human entering card details.
 
-- AI Chat + API playground to see x402 in action
-- AI agent that can pay for tools
-- Remote MCP server with "paid" tools
-- Paywalled APIs
-- Paywalled pages (for bots)
-- Secure server managed wallets
+## What's in the prototype
 
-## Tech Stack
+A chat agent backed by Vercel AI SDK and AI Gateway can call four MCP tools:
 
-- [Next.js](https://nextjs.org/)
-- [AI SDK](https://ai-sdk.dev)
-- [AI Elements](https://ai-elements.dev)
-- [AI Gateway](https://vercel.com/ai-gateway)
-- [Coinbase CDP](https://docs.cdp.coinbase.com/)
-- [x402](https://x402.org)
+| Tool | Paid? | Price | Purpose |
+| --- | --- | --- | --- |
+| `get_equity_research(ticker)` | Yes | $0.005 | Returns a short qualitative note for a curated ticker. |
+| `get_market_commentary(sector)` | Yes | $0.003 | Returns a one-paragraph sector read. |
+| `run_mini_backtest(ticker, strategy)` | Yes | $0.010 | Returns deterministically generated synthetic backtest stats. |
+| `ping_agent()` | No | Free | Health check, confirms seller agent is reachable. |
 
-## Getting Started
+Each paid call flows through the x402 server-managed wallet via Coinbase CDP. The buyer agent receives an HTTP 402, signs a stablecoin payment authorization, retries with a payment header, and the server returns the response.
+
+## Production gotcha worth pointing out
+
+The CDP balance API returns amounts in raw atomic units (USDC has six decimals, so `1000000` means `1.00 USDC`). The unmodified starter passes that integer straight to the LLM, which reads it as `1,000,000 USDC` in conversation. This fork adds a `format-usdc-atomic` tool and a system-prompt instruction that converts atomic units before display. It is a small fix, but it is the kind of bug that silently lands in production AI features if no one is reading the tool outputs.
+
+## Stack
+
+- Next.js App Router on Vercel
+- Vercel AI SDK + AI Gateway
+- AI Elements for the chat UI
+- Coinbase CDP for server-managed wallets and the x402 facilitator
+- [`x402-mcp`](https://www.npmjs.com/package/x402-mcp) for the paid MCP server
+- Base Sepolia testnet by default; switch to `base` mainnet via the `NETWORK` env var
+
+## Running locally
 
 ```bash
-git clone https://github.com/vercel-labs/x402-ai-starter
-cd x402-ai-starter
+git clone https://github.com/ms1ny-hue/x402-ai-agent
+cd x402-ai-agent
 pnpm install
 ```
 
-## Running Locally
-
-1. Sign into the [Coinbase CDP portal](https://portal.cdp.coinbase.com)
-
-2. Following `.env.example`, set the following environment variables in `.env.local`:
+Set the three CDP credentials in `.env.local` (see `.env.example`):
 
 - `CDP_API_KEY_ID`
 - `CDP_API_KEY_SECRET`
 - `CDP_WALLET_SECRET`
 
-Using AI Gateway requires either a Vercel OIDC token, or an API Key.
-To get an OIDC token, simply run `vc link` then `vc env pull`. An API can be obtained from the [AI Gateway dashboard](https://vercel.com/ai-gateway).
+For AI Gateway, run `vc link` then `vc env pull` to wire up the OIDC token automatically, or supply an `AI_GATEWAY_API_KEY` manually.
 
-Using AI Gateway isn't required, you can use any AI SDK model provider and its associated credentials.
+Then:
 
-3. Run `pnpm dev`
+```bash
+pnpm dev
+```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser to see the app in action.
+The dev server runs on [http://localhost:3000](http://localhost:3000). The seller wallet auto-refills from the Coinbase testnet faucet when it runs low, so no manual funding is needed.
 
-## Testing Payments
+## Cost ceiling
 
-By default, the app uses the `base-sepolia` network, or "testnet". This is a testing network with fake money. The app is configured to automically request more funds from a faucet (source of testnet money) when your account is running low. You can also do this yourself in the [Coinbase CDP dashboard](https://portal.cdp.coinbase.com/products/faucet?token=USDC&network=base-sepolia).
+The deployed demo runs on testnet, so x402 payments themselves move no real money. Vercel AI Gateway is the only real cost surface, and that is capped via Vercel Spend Management. Set a hard monthly cap in Vercel settings if forking this for your own use.
 
-## Going to Production
+## Disclaimer
 
-When you're ready to deploy your SaaS application to production, follow these steps:
+This is a portfolio prototype. It is not a regulated investment product, financial advice, or a recommendation of any security or strategy. Outputs are synthetic, deterministically generated for demonstration, and do not reflect real market data. Any references to backtests are illustrative; they do not control for survivorship bias, transaction costs, slippage, lookahead leakage, or other corrections required for credible quantitative research. References to named companies are for example purposes only and should not be read as a view on any security. Third-party trademarks (Vercel, Coinbase, Base, Stripe, NVDA, AAPL, MSFT, x402) are the property of their respective owners and are used here nominatively for context. Some text and code in this repository was drafted with the assistance of AI tools and reviewed by the author. The author is not acting on behalf of any current or former employer, and nothing in this repository represents the views, positions, products, or commitments of any employer or affiliated party. The software is provided as is, without warranty of any kind, express or implied, including but not limited to fitness for a particular purpose, merchantability, or non-infringement. The author disclaims any liability for losses, damages, or claims arising from use of this software or its outputs. Any disputes arising from use of this prototype are governed by the laws of the State of New York, without regard to conflict-of-law principles.
 
-### Deploy to Vercel
+## Credit
 
-1. Push your code to a GitHub repository.
-2. Connect your repository to [Vercel](https://vercel.com/) and deploy it.
-3. Follow the Vercel deployment process, which will guide you through setting up your project.
-
-### Add environment variables
-
-In your Vercel project settings (or during deployment), add all the necessary environment variables. Make sure to update the values for the production environment, including:
-
-- `CDP_API_KEY_ID`
-- `CDP_API_KEY_SECRET`
-- `CDP_WALLET_SECRET`
-
-## Moving to mainnet
-
-To move to mainnet, set the `NETWORK` environment variable to `base`.
-
-Make sure that the `Purchaser` account has enough funds to pay for the tools you're using. To fund the account, you can send USDC to the account's address in the [Coinbase CDP dashboard](https://portal.cdp.coinbase.com/products/server-wallet?accountType=evm-eoa).
+Forked from [`vercel-labs/x402-ai-starter`](https://github.com/vercel-labs/x402-ai-starter) and customized for a payments-and-fintech portfolio narrative.

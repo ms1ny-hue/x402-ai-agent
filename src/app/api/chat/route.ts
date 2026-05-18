@@ -25,13 +25,21 @@ export const POST = async (request: Request) => {
     model,
     tools: {
       ...tools,
-      "hello-local": tool({
-        description: "Receive a greeting",
+      "format-usdc-atomic": tool({
+        description:
+          "Convert a USDC amount expressed in 6-decimal atomic units (integer) into a human-readable dollar string.",
         inputSchema: z.object({
-          name: z.string(),
+          atomic: z
+            .string()
+            .describe("The amount in raw atomic units, as a string"),
         }),
         execute: async (args) => {
-          return `Hello ${args.name}`;
+          const atomic = BigInt(args.atomic);
+          const divisor = BigInt(1000000);
+          const whole = atomic / divisor;
+          const fraction = atomic % divisor;
+          const fractionStr = fraction.toString().padStart(6, "0");
+          return `${whole.toString()}.${fractionStr} USDC`;
         },
       }),
     },
@@ -40,7 +48,12 @@ export const POST = async (request: Request) => {
     onFinish: async () => {
       await mcpClient.close();
     },
-    system: "ALWAYS prompt the user to confirm before authorizing payments",
+    system: [
+      "You are an agentic equity research assistant in a portfolio prototype that demonstrates x402, an HTTP-native payment protocol for AI agents.",
+      "You can call paid tools. Each paid tool call settles in USDC on Base Sepolia (testnet). Tell the user the rough price of a paid tool before calling it, and prompt for confirmation if the price is non-trivial.",
+      "If any tool returns a USDC amount as raw atomic units (a large integer like 1000000), divide by 1,000,000 before reporting the dollar value. Never present raw atomic units as a dollar figure. A tool result of {\"amount\":\"1000000\"} is approximately 1.00 USDC, not 1,000,000 USDC. Use the format-usdc-atomic tool if you are unsure.",
+      "Outputs about named companies or sectors are synthetic, prototype-grade, and not investment advice. Prefer qualitative framings, hedge directional language, and remind the user once per session that this is a prototype with synthetic data.",
+    ].join(" "),
   });
   return result.toUIMessageStreamResponse({
     sendSources: true,

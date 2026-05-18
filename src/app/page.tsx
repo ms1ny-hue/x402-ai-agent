@@ -40,21 +40,23 @@ import {
 
 const models = [
   {
+    name: "Gemini 2.0 Flash Lite (cheap)",
+    value: "google/gemini-2.0-flash-lite",
+  },
+  {
     name: "GPT 4o",
     value: "openai/gpt-4o",
   },
-  {
-    name: "Gemini 2.0 Flash Lite",
-    value: "google/gemini-2.0-flash-lite",
-  },
 ];
 const suggestions = {
-  "Use a paid tool": "Generate a random number between 1 and 10.",
-  "What's my account balance?": "Check your account balance.",
-  "Use an unpaid remotetool":
-    "Please greet the user with 'hello-remote' by the name: 'user'",
-  "Use an unpaid local tool":
-    "Please greet the user with 'hello-local' by the name: 'user'",
+  "Equity research on NVDA":
+    "Use the get_equity_research tool to pull a short research note on NVDA.",
+  "Market commentary on semis":
+    "Use the get_market_commentary tool for a one-paragraph qualitative read on the semiconductors sector.",
+  "Mini backtest on AAPL":
+    "Use the run_mini_backtest tool on AAPL with the moving-average-crossover strategy.",
+  "Check agent wallet balance":
+    "Use ping_agent to confirm the agent wallet is reachable.",
 };
 
 const ChatBotDemo = () => {

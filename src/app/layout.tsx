@@ -14,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "x402 AI Starter Kit",
+  title: "Agentic Research, Pay-Per-Call",
   description:
-    "A demo of agentic payments powered by x402 using Next.js, AI SDK, AI Elements, AI Gateway, and the Coinbase CDP",
+    "A portfolio prototype where an AI agent pays a research API in stablecoin per call, using the x402 protocol on Base Sepolia. Synthetic data, not investment advice.",
 };
 
 export default function RootLayout({
@@ -31,60 +31,45 @@ export default function RootLayout({
       >
         <div className="size-full flex flex-col">
           <header className={`${geistSans.className} border-b border-black`}>
-            <div className="flex flex-col gap-2 w-full">
-              <div className="flex flex-row gap-2 text-xl font-bold items-center justify-center">
+            <div className="flex flex-col gap-2 w-full px-4 py-3">
+              <div className="flex flex-row gap-2 text-xl font-bold items-baseline justify-center flex-wrap">
+                <h1>Agentic Research, Pay-Per-Call</h1>
+                <span className="text-sm font-normal text-neutral-500">
+                  a portfolio prototype by Michael Stanat
+                </span>
+              </div>
+              <p className="text-sm text-neutral-600 text-center max-w-3xl mx-auto">
+                A chat agent that pays a research API in stablecoin per call,
+                using the{" "}
+                <Link href="https://x402.org" className="underline">
+                  x402
+                </Link>{" "}
+                HTTP payment protocol on{" "}
                 <Link
-                  href="https://github.com/vercel-labs/x402-ai-starter"
+                  href="https://docs.base.org/chain/network-information"
                   className="underline"
                 >
-                  <h1>x402 AI Starter Kit</h1>
-                </Link>{" "}
-                -
-                <h2>
-                  powered by:{" "}
-                  <Link href="https://nextjs.org" className="underline">
-                    Next.js
-                  </Link>
-                  ,{" "}
-                  <Link href="https://ai-sdk.dev" className="underline">
-                    AI SDK
-                  </Link>
-                  ,{" "}
-                  <Link
-                    href="https://vercel.com/ai-gateway"
-                    className="underline"
-                  >
-                    AI Gateway
-                  </Link>
-                  ,{" "}
-                  <Link
-                    href="https://ai-sdk.dev/elements/overview"
-                    className="underline"
-                  >
-                    AI Elements
-                  </Link>
-                  , and the{" "}
-                  <Link
-                    href="https://docs.cdp.coinbase.com/"
-                    className="underline"
-                  >
-                    Coinbase CDP
-                  </Link>
-                </h2>
-              </div>
+                  Base Sepolia
+                </Link>
+                . Stablecoin rails for AI agents, not a card-network alternative
+                for humans. Synthetic data, not investment advice.
+              </p>
               <div className="w-full flex flex-row items-center justify-center py-1">
-                <div className="flex flex-row gap-5 items-center">
+                <div className="flex flex-row gap-5 items-center text-sm">
                   <Link href="/" className="underline">
-                    Chat with paid remote MCP tools
+                    Chat
                   </Link>
                   <Link href="/playground" className="underline">
-                    Paid API playground
+                    API playground
                   </Link>
-                  <Link href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fx402-ai-starter&env=CDP_API_KEY_ID,CDP_API_KEY_SECRET,CDP_WALLET_SECRET&envDescription=Coinbase%20Developer%20Platform%20credentials%20are%20needed%20to%20create%20and%20fund%20server%20wallets&envLink=https%3A%2F%2Fdocs.cdp.coinbase.com%2Fapi-reference%2Fv2%2Fauthentication&project-name=x402-ai-starter&repository-name=x402-ai-starter&demo-title=x402%20AI%20Starter&demo-description=A%20fullstack%20template%20for%20using%20x402%20with%20MCP%20and%20AI%20SDK&demo-url=https%3A%2F%2Fx402-ai-starter.labs.vercel.dev%2F&demo-image=https%3A%2F%2Fx402-ai-starter.labs.vercel.dev%2Fscreenshot.png">
-                    <img
-                      src="https://vercel.com/button"
-                      alt="Deploy with Vercel"
-                    />
+                  <Link
+                    href="https://github.com/ms1ny-hue/x402-ai-agent"
+                    className="underline"
+                  >
+                    GitHub
+                  </Link>
+                  <Link href="https://x402.org" className="underline">
+                    About x402
                   </Link>
                 </div>
               </div>
@@ -92,6 +77,11 @@ export default function RootLayout({
           </header>
 
           <main className="flex-1">{children}</main>
+          <footer className="border-t border-neutral-200 px-4 py-3 text-xs text-neutral-500 text-center">
+            Prototype output is synthetic and illustrative. Not investment
+            advice, not affiliated with any issuer, employer, or third party.
+            See the README for the full disclaimer.
+          </footer>
         </div>
       </body>
     </html>
