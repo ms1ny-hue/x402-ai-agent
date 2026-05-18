@@ -97,7 +97,32 @@ const ChatBotDemo = () => {
       <div className="flex flex-col h-full">
         <Conversation className="h-full">
           <ConversationContent>
-            {messages.map((message) => (
+            {messages.map((message) => {
+              // Pre-scan: find paid-tool names that appear more than once in
+              // this message. The first occurrence is the x402 handshake
+              // (returns 402, rendered as "Error"). The retry below it is
+              // the real success. Hide the first occurrence so visitors do
+              // not think the demo broke.
+              const PAID_TOOL_NAMES = [
+                "get_equity_research",
+                "get_market_commentary",
+                "run_mini_backtest",
+              ];
+              const getToolName = (p: unknown): string => {
+                const pa = p as { type?: string; toolName?: string };
+                if (pa.type === "dynamic-tool") return pa.toolName ?? "";
+                if (pa.type?.startsWith("tool-")) return pa.type.slice(5);
+                return "";
+              };
+              const paidToolCounts = new Map<string, number>();
+              message.parts.forEach((p) => {
+                const name = getToolName(p);
+                if (PAID_TOOL_NAMES.some((n) => name.includes(n))) {
+                  paidToolCounts.set(name, (paidToolCounts.get(name) ?? 0) + 1);
+                }
+              });
+              const firstSeen = new Set<string>();
+              return (
               <Message from={message.role} key={message.id}>
                 <MessageContent>
                   {message.parts.map((part, i) => {
@@ -122,31 +147,19 @@ const ChatBotDemo = () => {
                       part.type === "dynamic-tool" ||
                       part.type.startsWith("tool-")
                     ) {
-                      // Hide the noisy first-round 402 handshake on paid
-                      // tools: the x402 first call returns 402, the AI
-                      // Elements component labels that "Error", visitors
-                      // misread it as a real failure. The next-step retry
-                      // tells the real story. Filter by tool name + error
-                      // state, since the 402 body is not reliably present
-                      // on the serialized part.
-                      const PAID_TOOL_NAMES = [
-                        "get_equity_research",
-                        "get_market_commentary",
-                        "run_mini_backtest",
-                      ];
-                      const partAny = part as unknown as {
-                        state?: string;
-                        type?: string;
-                        toolName?: string;
-                      };
-                      const toolName =
-                        partAny.type === "dynamic-tool"
-                          ? partAny.toolName ?? ""
-                          : (partAny.type ?? "").slice(5);
-                      const isPaymentHandshake =
-                        partAny.state === "output-error" &&
-                        PAID_TOOL_NAMES.some((n) => toolName.includes(n));
-                      if (isPaymentHandshake) {
+                      const toolName = getToolName(part);
+                      const isPaidTool = PAID_TOOL_NAMES.some((n) =>
+                        toolName.includes(n)
+                      );
+                      // If this paid tool appears more than once in the
+                      // message, the first occurrence is the 402 handshake
+                      // and gets hidden. The retry below it shows success.
+                      if (
+                        isPaidTool &&
+                        (paidToolCounts.get(toolName) ?? 0) > 1 &&
+                        !firstSeen.has(toolName)
+                      ) {
+                        firstSeen.add(toolName);
                         return null;
                       }
                       return (
@@ -171,7 +184,8 @@ const ChatBotDemo = () => {
                   })}
                 </MessageContent>
               </Message>
-            ))}
+              );
+            })}
             {status === "submitted" && <Loader />}
             {status === "error" && <div>Something went wrong</div>}
           </ConversationContent>
