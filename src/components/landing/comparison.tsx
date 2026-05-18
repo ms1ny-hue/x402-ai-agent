@@ -80,8 +80,8 @@ export function Comparison() {
           </p>
         </div>
 
-        <div className="border border-[#0a0e1a]/15 rounded-lg overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="border border-[#0a0e1a]/15 rounded-lg overflow-x-auto">
+          <table className="w-full text-sm min-w-[680px]">
             <thead>
               <tr className="bg-[#0a0e1a] text-[#fbfaf7]">
                 <th className="text-left font-mono text-[11px] uppercase tracking-[0.18em] px-4 py-3 font-normal">

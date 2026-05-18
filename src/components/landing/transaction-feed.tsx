@@ -141,7 +141,8 @@ export function TransactionFeed() {
           )}
 
           {!loading && !error && data && data.transactions.length > 0 && (
-            <table className="w-full text-sm">
+            <div className="overflow-x-auto">
+            <table className="w-full text-sm min-w-[560px]">
               <thead>
                 <tr className="text-[10.5px] font-mono uppercase tracking-[0.18em] text-[#0a0e1a]/55 border-b border-[#0a0e1a]/10">
                   <th className="text-left px-4 py-2 font-normal">When</th>
@@ -183,6 +184,7 @@ export function TransactionFeed() {
                 ))}
               </tbody>
             </table>
+            </div>
           )}
         </div>
       </div>

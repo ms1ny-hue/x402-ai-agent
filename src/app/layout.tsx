@@ -49,16 +49,16 @@ export default function RootLayout({
                 </span>
               </Link>
               <nav className="flex items-center gap-5 text-[13px] text-[#0a0e1a]/75">
-                <Link href="#how" className="hover:text-[#0a0e1a]">
+                <Link href="#how" className="hidden md:inline hover:text-[#0a0e1a]">
                   How it works
                 </Link>
-                <Link href="#demo" className="hover:text-[#0a0e1a]">
+                <Link href="#demo" className="hidden md:inline hover:text-[#0a0e1a]">
                   Live demo
                 </Link>
-                <Link href="#payments" className="hover:text-[#0a0e1a]">
+                <Link href="#payments" className="hidden md:inline hover:text-[#0a0e1a]">
                   Payments
                 </Link>
-                <Link href="#compare" className="hover:text-[#0a0e1a]">
+                <Link href="#compare" className="hidden md:inline hover:text-[#0a0e1a]">
                   vs. PSPs
                 </Link>
                 <Link
