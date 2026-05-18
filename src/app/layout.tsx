@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 
@@ -11,6 +11,13 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-serif",
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
@@ -27,60 +34,68 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
+        className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} antialiased bg-[#fbfaf7] text-[#0a0e1a]`}
       >
-        <div className="size-full flex flex-col">
-          <header className={`${geistSans.className} border-b border-black`}>
-            <div className="flex flex-col gap-2 w-full px-4 py-3">
-              <div className="flex flex-row gap-2 text-xl font-bold items-baseline justify-center flex-wrap">
-                <h1>Agentic Research, Pay-Per-Call</h1>
-                <span className="text-sm font-normal text-neutral-500">
-                  a portfolio prototype by Michael Stanat
+        <div className="min-h-full flex flex-col">
+          <header className="sticky top-0 z-40 backdrop-blur-md bg-[#fbfaf7]/85 border-b border-[#0a0e1a]/10">
+            <div className="max-w-6xl mx-auto flex items-center justify-between px-5 py-3">
+              <Link href="/" className="flex items-center gap-2 font-semibold">
+                <span className="inline-block w-2 h-2 rounded-full bg-[#ff6b1a] animate-pulse" />
+                <span className="font-mono text-[13px] tracking-tight">
+                  x402.demo
                 </span>
-              </div>
-              <p className="text-sm text-neutral-600 text-center max-w-3xl mx-auto">
-                A chat agent that pays a research API in stablecoin per call,
-                using the{" "}
-                <Link href="https://x402.org" className="underline">
-                  x402
-                </Link>{" "}
-                HTTP payment protocol on{" "}
-                <Link
-                  href="https://docs.base.org/chain/network-information"
-                  className="underline"
-                >
-                  Base Sepolia
+                <span className="text-[11px] uppercase tracking-[0.18em] text-[#0a0e1a]/55 ml-2 border-l border-[#0a0e1a]/15 pl-2">
+                  testnet
+                </span>
+              </Link>
+              <nav className="flex items-center gap-5 text-[13px] text-[#0a0e1a]/75">
+                <Link href="#how" className="hover:text-[#0a0e1a]">
+                  How it works
                 </Link>
-                . Stablecoin rails for AI agents, not a card-network alternative
-                for humans. Synthetic data, not investment advice.
-              </p>
-              <div className="w-full flex flex-row items-center justify-center py-1">
-                <div className="flex flex-row gap-5 items-center text-sm">
-                  <Link href="/" className="underline">
-                    Chat
-                  </Link>
-                  <Link href="/playground" className="underline">
-                    API playground
-                  </Link>
+                <Link href="#demo" className="hover:text-[#0a0e1a]">
+                  Live demo
+                </Link>
+                <Link href="#payments" className="hover:text-[#0a0e1a]">
+                  Payments
+                </Link>
+                <Link href="#compare" className="hover:text-[#0a0e1a]">
+                  vs. PSPs
+                </Link>
+                <Link
+                  href="https://github.com/ms1ny-hue/x402-ai-agent"
+                  className="rounded-full border border-[#0a0e1a]/20 px-3 py-1 hover:bg-[#0a0e1a] hover:text-[#fbfaf7] transition-colors"
+                >
+                  GitHub
+                </Link>
+              </nav>
+            </div>
+          </header>
+
+          <main className="flex-1">{children}</main>
+
+          <footer className="border-t border-[#0a0e1a]/10 mt-16">
+            <div className="max-w-6xl mx-auto px-5 py-8 text-[12px] text-[#0a0e1a]/55 flex flex-col gap-3">
+              <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                <span className="font-mono text-[#0a0e1a]/80">x402.demo</span>
+                <span>
+                  A portfolio prototype by Michael Stanat. Source on{" "}
                   <Link
                     href="https://github.com/ms1ny-hue/x402-ai-agent"
                     className="underline"
                   >
                     GitHub
                   </Link>
-                  <Link href="https://x402.org" className="underline">
-                    About x402
-                  </Link>
-                </div>
+                  .
+                </span>
               </div>
+              <p className="leading-relaxed max-w-4xl">
+                Prototype output is synthetic and illustrative. Not investment
+                advice, not affiliated with any issuer, employer, or third
+                party. Third-party trademarks used nominatively for context.
+                Some content drafted with AI assistance and reviewed by the
+                author. See the README for the full disclaimer.
+              </p>
             </div>
-          </header>
-
-          <main className="flex-1">{children}</main>
-          <footer className="border-t border-neutral-200 px-4 py-3 text-xs text-neutral-500 text-center">
-            Prototype output is synthetic and illustrative. Not investment
-            advice, not affiliated with any issuer, employer, or third party.
-            See the README for the full disclaimer.
           </footer>
         </div>
       </body>
