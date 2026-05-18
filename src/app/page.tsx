@@ -122,24 +122,20 @@ const ChatBotDemo = () => {
                       part.type === "dynamic-tool" ||
                       part.type.startsWith("tool-")
                     ) {
-                      // Hide the noisy first-round 402 handshake: when an x402
-                      // paid tool is called without a payment header, the
-                      // server returns a 402 that the UI labels "Error", even
-                      // though the next-step retry succeeds. Visitors read
-                      // that as a real failure. Skip rendering those parts.
-                      const partAny = part as unknown as {
-                        state?: string;
-                        errorText?: string;
-                        output?: unknown;
-                      };
-                      const errStr =
-                        partAny.errorText ??
-                        (typeof partAny.output === "string"
-                          ? partAny.output
-                          : "");
+                      // Hide the noisy first-round 402 handshake: when an
+                      // x402 paid tool is called without a payment header,
+                      // the server returns a 402 that the UI labels "Error",
+                      // even though the next-step retry succeeds. Visitors
+                      // read that as a real failure, so we drop it from the
+                      // chat transcript. The successful retry below it tells
+                      // the real story.
+                      const partAny = part as unknown as { state?: string };
+                      const partJson = JSON.stringify(part);
                       const isPaymentHandshake =
                         partAny.state === "output-error" &&
-                        errStr.includes("x402Version");
+                        (partJson.includes("x402Version") ||
+                          partJson.includes("_meta.x402") ||
+                          partJson.includes("payment is required"));
                       if (isPaymentHandshake) {
                         return null;
                       }
