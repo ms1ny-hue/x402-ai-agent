@@ -122,8 +122,29 @@ const ChatBotDemo = () => {
                       part.type === "dynamic-tool" ||
                       part.type.startsWith("tool-")
                     ) {
+                      // Hide the noisy first-round 402 handshake: when an x402
+                      // paid tool is called without a payment header, the
+                      // server returns a 402 that the UI labels "Error", even
+                      // though the next-step retry succeeds. Visitors read
+                      // that as a real failure. Skip rendering those parts.
+                      const partAny = part as unknown as {
+                        state?: string;
+                        errorText?: string;
+                        output?: unknown;
+                      };
+                      const errStr =
+                        partAny.errorText ??
+                        (typeof partAny.output === "string"
+                          ? partAny.output
+                          : "");
+                      const isPaymentHandshake =
+                        partAny.state === "output-error" &&
+                        errStr.includes("x402Version");
+                      if (isPaymentHandshake) {
+                        return null;
+                      }
                       return (
-                        <Tool defaultOpen={true} key={`${message.id}-${i}`}>
+                        <Tool defaultOpen={false} key={`${message.id}-${i}`}>
                           {/* @ts-expect-error */}
                           <ToolHeader part={part} />
                           <ToolContent>
