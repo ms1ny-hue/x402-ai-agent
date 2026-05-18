@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
-import { createPublicClient, http, parseAbiItem, formatUnits } from "viem";
+import {
+  createPublicClient,
+  http,
+  parseAbiItem,
+  formatUnits,
+  erc20Abi,
+} from "viem";
 import { baseSepolia } from "viem/chains";
 import { getOrCreateSellerAccount } from "@/lib/accounts";
 
@@ -14,6 +20,16 @@ interface TxRecord {
   amountAtomic: string;
   amountUsdc: string;
   timestamp: number | null;
+}
+
+interface AggregateStats {
+  txCount: number;
+  totalAtomic: string;
+  totalUsdc: string;
+  distinctBuyers: number;
+  currentBalanceAtomic: string;
+  currentBalanceUsdc: string;
+  windowBlocks: number;
 }
 
 const transferEvent = parseAbiItem(
@@ -68,6 +84,39 @@ export async function GET() {
       })
       .slice(0, 20);
 
+    // Aggregate stats from everything we collected (not just the trimmed
+    // recent[] slice). totalAtomic is a sum across all observed Transfers
+    // into the seller in the scanned window, so it understates lifetime
+    // volume.
+    let totalAtomic = BigInt(0);
+    const buyers = new Set<string>();
+    for (const log of collected) {
+      totalAtomic += log.args.value ?? BigInt(0);
+      if (log.args.from) buyers.add(log.args.from.toLowerCase());
+    }
+
+    let currentBalanceAtomic = BigInt(0);
+    try {
+      currentBalanceAtomic = await client.readContract({
+        address: USDC_ADDRESS,
+        abi: erc20Abi,
+        functionName: "balanceOf",
+        args: [sellerAddress],
+      });
+    } catch {
+      currentBalanceAtomic = BigInt(0);
+    }
+
+    const aggregate: AggregateStats = {
+      txCount: collected.length,
+      totalAtomic: totalAtomic.toString(),
+      totalUsdc: formatUnits(totalAtomic, 6),
+      distinctBuyers: buyers.size,
+      currentBalanceAtomic: currentBalanceAtomic.toString(),
+      currentBalanceUsdc: formatUnits(currentBalanceAtomic, 6),
+      windowBlocks: Number(chunkSize) * maxChunks,
+    };
+
     const enriched: TxRecord[] = await Promise.all(
       recent.map(async (log) => {
         const blockNumber = log.blockNumber;
@@ -100,6 +149,7 @@ export async function GET() {
       asset: USDC_ADDRESS,
       assetSymbol: "USDC",
       assetDecimals: 6,
+      aggregate,
       transactions: enriched,
     });
   } catch (err) {

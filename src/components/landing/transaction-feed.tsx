@@ -12,6 +12,16 @@ interface TxRecord {
   timestamp: number | null;
 }
 
+interface AggregateStats {
+  txCount: number;
+  totalAtomic: string;
+  totalUsdc: string;
+  distinctBuyers: number;
+  currentBalanceAtomic: string;
+  currentBalanceUsdc: string;
+  windowBlocks: number;
+}
+
 interface FeedData {
   sellerAddress: string;
   network: string;
@@ -19,6 +29,7 @@ interface FeedData {
   asset: string;
   assetSymbol: string;
   assetDecimals: number;
+  aggregate?: AggregateStats;
   transactions: TxRecord[];
   error?: string;
 }
@@ -96,18 +107,64 @@ export function TransactionFeed() {
         </div>
 
         {data && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-xs font-mono">
-            <FieldStrip label="Network" value="eip155:84532" />
-            <FieldStrip
-              label="Asset"
-              value={`USDC (${shortAddr(data.asset)})`}
-            />
-            <FieldStrip
-              label="Seller wallet"
-              value={shortAddr(data.sellerAddress)}
-            />
-            <FieldStrip label="Decimals" value="6" />
-          </div>
+          <>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+              <BigStat
+                label="Total received"
+                value={
+                  data.aggregate
+                    ? `${Number(data.aggregate.totalUsdc).toFixed(3)} USDC`
+                    : "—"
+                }
+                sub={
+                  data.aggregate
+                    ? `${Number(data.aggregate.totalAtomic).toLocaleString()} atomic`
+                    : ""
+                }
+              />
+              <BigStat
+                label="On-chain settlements"
+                value={
+                  data.aggregate ? data.aggregate.txCount.toString() : "—"
+                }
+                sub={
+                  data.aggregate
+                    ? `last ${data.aggregate.windowBlocks.toLocaleString()} blocks`
+                    : ""
+                }
+              />
+              <BigStat
+                label="Distinct buyers"
+                value={
+                  data.aggregate
+                    ? data.aggregate.distinctBuyers.toString()
+                    : "—"
+                }
+                sub="EOA addresses"
+              />
+              <BigStat
+                label="Wallet balance"
+                value={
+                  data.aggregate
+                    ? `${Number(data.aggregate.currentBalanceUsdc).toFixed(3)} USDC`
+                    : "—"
+                }
+                sub="auto-refills from faucet"
+              />
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 text-xs font-mono">
+              <FieldStrip label="Network" value="eip155:84532" />
+              <FieldStrip
+                label="Asset"
+                value={`USDC (${shortAddr(data.asset)})`}
+              />
+              <FieldStrip
+                label="Seller wallet"
+                value={shortAddr(data.sellerAddress)}
+              />
+              <FieldStrip label="Decimals" value="6" />
+            </div>
+          </>
         )}
 
         <div className="border border-[#0a0e1a]/15 rounded-lg overflow-hidden bg-[#fbfaf7]">
@@ -199,6 +256,28 @@ function FieldStrip({ label, value }: { label: string; value: string }) {
         {label}
       </div>
       <div className="text-[#0a0e1a]">{value}</div>
+    </div>
+  );
+}
+
+function BigStat({
+  label,
+  value,
+  sub,
+}: {
+  label: string;
+  value: string;
+  sub: string;
+}) {
+  return (
+    <div className="border border-[#0a0e1a]/10 rounded-lg p-4 bg-[#fbfaf7]">
+      <div className="text-[10px] uppercase tracking-[0.18em] text-[#0a0e1a]/55 font-mono mb-2">
+        {label}
+      </div>
+      <div className="font-serif text-2xl md:text-3xl leading-none mb-1.5 tabular-nums">
+        {value}
+      </div>
+      <div className="text-[11px] font-mono text-[#0a0e1a]/50">{sub}</div>
     </div>
   );
 }
