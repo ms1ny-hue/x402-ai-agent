@@ -122,20 +122,30 @@ const ChatBotDemo = () => {
                       part.type === "dynamic-tool" ||
                       part.type.startsWith("tool-")
                     ) {
-                      // Hide the noisy first-round 402 handshake: when an
-                      // x402 paid tool is called without a payment header,
-                      // the server returns a 402 that the UI labels "Error",
-                      // even though the next-step retry succeeds. Visitors
-                      // read that as a real failure, so we drop it from the
-                      // chat transcript. The successful retry below it tells
-                      // the real story.
-                      const partAny = part as unknown as { state?: string };
-                      const partJson = JSON.stringify(part);
+                      // Hide the noisy first-round 402 handshake on paid
+                      // tools: the x402 first call returns 402, the AI
+                      // Elements component labels that "Error", visitors
+                      // misread it as a real failure. The next-step retry
+                      // tells the real story. Filter by tool name + error
+                      // state, since the 402 body is not reliably present
+                      // on the serialized part.
+                      const PAID_TOOL_NAMES = [
+                        "get_equity_research",
+                        "get_market_commentary",
+                        "run_mini_backtest",
+                      ];
+                      const partAny = part as unknown as {
+                        state?: string;
+                        type?: string;
+                        toolName?: string;
+                      };
+                      const toolName =
+                        partAny.type === "dynamic-tool"
+                          ? partAny.toolName ?? ""
+                          : (partAny.type ?? "").slice(5);
                       const isPaymentHandshake =
                         partAny.state === "output-error" &&
-                        (partJson.includes("x402Version") ||
-                          partJson.includes("_meta.x402") ||
-                          partJson.includes("payment is required"));
+                        PAID_TOOL_NAMES.some((n) => toolName.includes(n));
                       if (isPaymentHandshake) {
                         return null;
                       }
