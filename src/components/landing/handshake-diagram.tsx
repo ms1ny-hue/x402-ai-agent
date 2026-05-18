@@ -1,29 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-
+/**
+ * Static SVG schematic of the x402 handshake with cheap CSS-only pulses
+ * at node endpoints. No animateMotion (which was triggering heavy
+ * per-frame paint/composite work). The schematic communicates the
+ * protocol topology; the pulses signal liveness without melting GPUs.
+ */
 export function HandshakeDiagram() {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const [visible, setVisible] = useState(true);
-
-  // Pause heavy SVG animations when offscreen so the page stays
-  // responsive while the user is reading other sections.
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (!("IntersectionObserver" in window) || !ref.current) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setVisible(entry.isIntersecting),
-      { rootMargin: "0px 0px 100px 0px", threshold: 0 }
-    );
-    observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
   return (
-    <div
-      ref={ref}
-      className="relative aspect-[4/5] md:aspect-[5/6] w-full bracket-panel bg-[var(--x-bg-elevated)] overflow-hidden"
-    >
+    <div className="relative aspect-[4/5] md:aspect-[5/6] w-full bracket-panel bg-[var(--x-bg-elevated)] overflow-hidden">
       <span className="bracket-tr" />
       <span className="bracket-bl" />
 
@@ -33,9 +18,9 @@ export function HandshakeDiagram() {
       <div className="absolute top-3 left-3 right-3 flex items-center justify-between text-[9.5px] font-mono uppercase tracking-[0.28em] text-[var(--x-text-subtle)] z-10">
         <div className="flex items-center gap-1.5">
           <span className="w-1 h-1 rounded-full bg-[var(--x-accent-bright)] diode shadow-[0_0_6px_rgba(56,189,248,0.9)]" />
-          handshake · loop
+          handshake · schematic
         </div>
-        <div className="hidden sm:block">cycle ~6s</div>
+        <div className="hidden sm:block">x402 / eip-3009</div>
       </div>
 
       <svg
@@ -56,37 +41,74 @@ export function HandshakeDiagram() {
           </radialGradient>
         </defs>
 
-        {/* connection lines */}
+        {/* connection lines, labeled */}
         <g stroke="url(#chromeStroke)" strokeWidth="0.7" fill="none">
-          <line x1="80" y1="120" x2="320" y2="120" strokeDasharray="2 4" />
-          <line x1="320" y1="160" x2="80" y2="160" strokeDasharray="2 4" />
-          <line x1="80" y1="240" x2="320" y2="240" strokeDasharray="2 4" />
-          <line x1="320" y1="280" x2="200" y2="380" strokeDasharray="2 4" />
-          <line x1="200" y1="400" x2="200" y2="460" strokeDasharray="2 4" />
-          <line x1="220" y1="460" x2="320" y2="320" strokeDasharray="2 4" />
-          <line x1="320" y1="200" x2="80" y2="200" strokeDasharray="2 4" />
+          {/* GET request */}
+          <line x1="120" y1="160" x2="280" y2="160" strokeDasharray="2 4" />
+          {/* 402 response */}
+          <line x1="280" y1="180" x2="120" y2="180" strokeDasharray="2 4" />
+          {/* X-PAYMENT retry */}
+          <line x1="120" y1="220" x2="280" y2="220" strokeDasharray="2 4" />
+          {/* server -> facilitator verify */}
+          <line x1="320" y1="260" x2="240" y2="350" strokeDasharray="2 4" />
+          {/* facilitator -> chain */}
+          <line x1="200" y1="410" x2="200" y2="450" strokeDasharray="2 4" />
+          {/* chain -> server tx hash */}
+          <line x1="220" y1="445" x2="320" y2="290" strokeDasharray="2 4" />
+          {/* 200 OK */}
+          <line x1="280" y1="200" x2="120" y2="200" strokeDasharray="2 4" />
+        </g>
+
+        {/* link labels */}
+        <g
+          fontFamily="JetBrains Mono, monospace"
+          fontSize="7"
+          letterSpacing="1.5"
+          fill="#71717a"
+        >
+          <text x="200" y="155" textAnchor="middle">
+            GET
+          </text>
+          <text x="200" y="194" textAnchor="middle" fill="#7dd3fc">
+            402 PAYMENT REQUIRED
+          </text>
+          <text x="200" y="216" textAnchor="middle">
+            X-PAYMENT &lt;auth&gt;
+          </text>
+          <text x="270" y="316" textAnchor="middle">
+            verify
+          </text>
+          <text x="210" y="438" textAnchor="middle">
+            transferWithAuthorization
+          </text>
+          <text x="290" y="380" textAnchor="middle" fill="#7dd3fc">
+            0xa4…
+          </text>
+          <text x="200" y="244" textAnchor="middle" fill="#7dd3fc">
+            200 OK + X-PAYMENT-RESPONSE
+          </text>
         </g>
 
         {/* node glows */}
-        <circle cx="80" cy="160" r="46" fill="url(#nodeGlow)" />
-        <circle cx="320" cy="160" r="46" fill="url(#nodeGlow)" />
+        <circle cx="80" cy="180" r="46" fill="url(#nodeGlow)" />
+        <circle cx="320" cy="180" r="46" fill="url(#nodeGlow)" />
         <circle cx="200" cy="380" r="46" fill="url(#nodeGlow)" />
-        <circle cx="200" cy="470" r="34" fill="url(#nodeGlow)" />
+        <circle cx="200" cy="460" r="34" fill="url(#nodeGlow)" />
 
         {/* nodes */}
-        <NodeBox x={40} y={130} label="buyer" sub="EOA + agent" />
-        <NodeBox x={280} y={130} label="server" sub="MCP / api" />
+        <NodeBox x={40} y={150} label="buyer" sub="EOA + agent" />
+        <NodeBox x={280} y={150} label="server" sub="MCP / api" />
         <NodeBox x={160} y={350} label="facilitator" sub="verify · settle" />
-        <ChainBox x={160} y={448} />
+        <ChainBox x={160} y={438} />
 
-        {/* moving packets — only when visible, only 3 packets, 6s cycle */}
-        {visible && (
-          <>
-            <Packet path="M80,120 L320,120" delay={0} color="#e4e4e7" />
-            <Packet path="M200,400 L200,460" delay={2} color="#7dd3fc" />
-            <Packet path="M320,200 L80,200" delay={4} color="#7dd3fc" />
-          </>
-        )}
+        {/* cheap CSS-only pulse at chain (settlement) — only one moving element */}
+        <circle
+          cx="200"
+          cy="456"
+          r="3"
+          fill="#7dd3fc"
+          className="settlement-pulse"
+        />
       </svg>
 
       <div className="absolute bottom-3 left-3 right-3 grid grid-cols-3 gap-2 text-[9.5px] font-mono uppercase tracking-[0.22em] text-[var(--x-text-subtle)] z-10">
@@ -203,40 +225,6 @@ function ChainBox({ x, y }: { x: number; y: number }) {
       >
         USDC.TRANSFER
       </text>
-    </g>
-  );
-}
-
-function Packet({
-  path,
-  delay,
-  color,
-}: {
-  path: string;
-  delay: number;
-  color: string;
-}) {
-  return (
-    <g>
-      <circle r="2.8" fill={color} opacity="0">
-        <animate
-          attributeName="opacity"
-          values="0;1;1;0"
-          keyTimes="0;0.05;0.95;1"
-          dur="6s"
-          begin={`${delay}s`}
-          repeatCount="indefinite"
-        />
-        <animateMotion
-          dur="6s"
-          begin={`${delay}s`}
-          repeatCount="indefinite"
-          path={path}
-          keyTimes="0;0.18;1"
-          keyPoints="0;1;1"
-          calcMode="linear"
-        />
-      </circle>
     </g>
   );
 }

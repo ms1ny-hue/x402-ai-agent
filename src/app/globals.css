@@ -311,6 +311,21 @@
   animation: diode-pulse 1.6s ease-in-out infinite;
 }
 
+@keyframes settlement-pulse {
+  0%, 100% {
+    r: 3;
+    opacity: 0.45;
+  }
+  50% {
+    r: 6;
+    opacity: 1;
+  }
+}
+.settlement-pulse {
+  filter: drop-shadow(0 0 4px rgba(125, 211, 252, 0.9));
+  animation: settlement-pulse 2.2s ease-in-out infinite;
+}
+
 /* Grain overlay — applied to body for tactile, almost-print feel.
    z-index kept low so it never blocks pointer events on real content. */
 body::before {
@@ -342,16 +357,11 @@ body::before {
   animation-delay: calc(var(--i, 0) * 80ms);
 }
 
-/* Scroll-reveal: data-reveal elements start invisible. IntersectionObserver
-   sets data-reveal="in" which animates them in. */
+/* Scroll-reveal: content is visible by default (never hidden behind
+   a JS-only state). The "in" state is reached additively. This keeps
+   the page accessible if JS is slow, fails, or the IntersectionObserver
+   pattern misses an element. */
 [data-reveal] {
-  opacity: 0;
-  transform: translateY(20px);
-  transition:
-    opacity 700ms cubic-bezier(0.2, 0.7, 0.2, 1),
-    transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-[data-reveal="in"] {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
 }
