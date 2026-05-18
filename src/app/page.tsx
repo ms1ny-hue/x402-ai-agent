@@ -40,12 +40,12 @@ import {
 
 const models = [
   {
-    name: "Gemini 2.0 Flash Lite (cheap)",
-    value: "google/gemini-2.0-flash-lite",
+    name: "GPT 4o (recommended)",
+    value: "openai/gpt-4o",
   },
   {
-    name: "GPT 4o",
-    value: "openai/gpt-4o",
+    name: "Gemini 2.0 Flash Lite (cheaper, may refuse to auto-pay)",
+    value: "google/gemini-2.0-flash-lite",
   },
 ];
 const suggestions = {
