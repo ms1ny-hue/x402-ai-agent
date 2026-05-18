@@ -34,18 +34,32 @@ export async function GET() {
     });
 
     const latest = await client.getBlockNumber();
-    const window = BigInt(5000);
-    const fromBlock = latest > window ? latest - window : BigInt(0);
+    // Base Sepolia public RPC caps eth_getLogs at 2000 blocks per call.
+    // Walk backwards in 1900-block chunks to surface roughly the last
+    // hour of activity. Stop once we have 20 transfers or hit 5 chunks.
+    const chunkSize = BigInt(1900);
+    const maxChunks = 5;
+    type Transfer = Awaited<ReturnType<typeof client.getLogs>>[number];
+    const collected: Transfer[] = [];
+    let toBlock = latest;
+    for (let i = 0; i < maxChunks && collected.length < 20; i++) {
+      const fromBlock =
+        toBlock > chunkSize ? toBlock - chunkSize : BigInt(0);
+      const logs = await client.getLogs({
+        address: USDC_ADDRESS,
+        event: transferEvent,
+        args: { to: sellerAddress },
+        fromBlock,
+        toBlock,
+      });
+      collected.push(...logs);
+      if (fromBlock === BigInt(0)) break;
+      toBlock = fromBlock - BigInt(1);
+    }
 
-    const logs = await client.getLogs({
-      address: USDC_ADDRESS,
-      event: transferEvent,
-      args: { to: sellerAddress },
-      fromBlock,
-      toBlock: latest,
-    });
-
-    const recent = logs.slice(-20).reverse();
+    const recent = collected
+      .sort((a, b) => Number(b.blockNumber - a.blockNumber))
+      .slice(0, 20);
 
     const enriched: TxRecord[] = await Promise.all(
       recent.map(async (log) => {
