@@ -34,50 +34,58 @@ export async function GET() {
     });
 
     const latest = await client.getBlockNumber();
-    // Base Sepolia public RPC caps eth_getLogs at 2000 blocks per call.
-    // Walk backwards in 1900-block chunks to surface roughly the last
-    // hour of activity. Stop once we have 20 transfers or hit 5 chunks.
-    const chunkSize = BigInt(1900);
-    const maxChunks = 5;
-    type Transfer = Awaited<ReturnType<typeof client.getLogs>>[number];
-    const collected: Transfer[] = [];
-    let toBlock = latest;
-    for (let i = 0; i < maxChunks && collected.length < 20; i++) {
-      const fromBlock =
-        toBlock > chunkSize ? toBlock - chunkSize : BigInt(0);
-      const logs = await client.getLogs({
+    const fetchWindow = async (fromBlock: bigint, toBlock: bigint) =>
+      client.getLogs({
         address: USDC_ADDRESS,
         event: transferEvent,
         args: { to: sellerAddress },
         fromBlock,
         toBlock,
       });
+    type Transfer = Awaited<ReturnType<typeof fetchWindow>>[number];
+
+    // Base Sepolia public RPC caps eth_getLogs at 2000 blocks per call.
+    // Walk backwards in 1900-block chunks to surface roughly the last
+    // hour of activity. Stop once we have 20 transfers or hit 5 chunks.
+    const chunkSize = BigInt(1900);
+    const maxChunks = 5;
+    const collected: Transfer[] = [];
+    let toBlock = latest;
+    for (let i = 0; i < maxChunks && collected.length < 20; i++) {
+      const fromBlock =
+        toBlock > chunkSize ? toBlock - chunkSize : BigInt(0);
+      const logs = await fetchWindow(fromBlock, toBlock);
       collected.push(...logs);
       if (fromBlock === BigInt(0)) break;
       toBlock = fromBlock - BigInt(1);
     }
 
     const recent = collected
-      .sort((a, b) => Number(b.blockNumber - a.blockNumber))
+      .sort((a, b) => {
+        const ab = a.blockNumber ?? BigInt(0);
+        const bb = b.blockNumber ?? BigInt(0);
+        return Number(bb - ab);
+      })
       .slice(0, 20);
 
     const enriched: TxRecord[] = await Promise.all(
       recent.map(async (log) => {
+        const blockNumber = log.blockNumber;
         let timestamp: number | null = null;
-        try {
-          const block = await client.getBlock({
-            blockNumber: log.blockNumber,
-          });
-          timestamp = Number(block.timestamp);
-        } catch {
-          timestamp = null;
+        if (blockNumber !== null) {
+          try {
+            const block = await client.getBlock({ blockNumber });
+            timestamp = Number(block.timestamp);
+          } catch {
+            timestamp = null;
+          }
         }
-        const value = (log.args.value as bigint | undefined) ?? BigInt(0);
+        const value = log.args.value ?? BigInt(0);
         return {
-          txHash: log.transactionHash,
-          blockNumber: log.blockNumber.toString(),
-          from: (log.args.from as string | undefined) ?? "",
-          to: (log.args.to as string | undefined) ?? "",
+          txHash: log.transactionHash ?? "",
+          blockNumber: blockNumber !== null ? blockNumber.toString() : "",
+          from: log.args.from ?? "",
+          to: log.args.to ?? "",
           amountAtomic: value.toString(),
           amountUsdc: formatUnits(value, 6),
           timestamp,
