@@ -90,10 +90,10 @@ export function TransactionFeed() {
   return (
     <section id="payments" className="border-b border-[#0a0e1a]/10">
       <div className="max-w-6xl mx-auto px-5 py-14 md:py-20">
-        <div className="flex items-baseline justify-between flex-wrap gap-3 mb-8">
+        <div className="flex items-baseline justify-between flex-wrap gap-3 mb-6">
           <div>
             <p className="text-[11px] uppercase tracking-[0.18em] text-[#0a0e1a]/55 font-mono mb-3">
-              On-chain settlement log
+              On-chain settlement log · live proof
             </p>
             <h2 className="font-serif text-3xl md:text-5xl leading-tight tracking-[-0.02em]">
               Real USDC, real blocks. <em>Live from Base Sepolia.</em>
@@ -105,6 +105,36 @@ export function TransactionFeed() {
             verify on Basescan.
           </p>
         </div>
+
+        {data && data.transactions.length > 0 && (
+          <div className="mb-6 border border-[#ff6b1a]/40 bg-[#ff6b1a]/5 rounded-lg p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div className="text-sm text-[#0a0e1a] flex items-baseline gap-2 flex-wrap">
+              <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#ff6b1a]">
+                Proof of realness
+              </span>
+              <span>
+                The most recent payment settled{" "}
+                <span className="tabular-nums">
+                  {Number(data.transactions[0].amountUsdc).toFixed(3)} USDC
+                </span>{" "}
+                on Base Sepolia{" "}
+                {relativeTime(data.transactions[0].timestamp)}, in block{" "}
+                <span className="font-mono">
+                  {Number(data.transactions[0].blockNumber).toLocaleString()}
+                </span>
+                . You can verify the tx directly on Basescan.
+              </span>
+            </div>
+            <a
+              href={`https://sepolia.basescan.org/tx/${data.transactions[0].txHash}`}
+              target="_blank"
+              rel="noreferrer"
+              className="self-start md:self-auto rounded-full bg-[#ff6b1a] text-[#fbfaf7] text-xs font-mono px-3 py-1.5 hover:bg-[#0a0e1a] transition-colors whitespace-nowrap"
+            >
+              Verify latest tx ↗
+            </a>
+          </div>
+        )}
 
         {data && (
           <>

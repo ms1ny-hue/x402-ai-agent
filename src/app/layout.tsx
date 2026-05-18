@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
+import { DisclaimerBar } from "@/components/landing/disclaimer-bar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -51,6 +52,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} antialiased bg-[#fbfaf7] text-[#0a0e1a]`}
       >
         <div className="min-h-full flex flex-col">
+          <DisclaimerBar />
           <header className="sticky top-0 z-40 backdrop-blur-md bg-[#fbfaf7]/85 border-b border-[#0a0e1a]/10">
             <div className="max-w-6xl mx-auto flex items-center justify-between px-5 py-3">
               <Link href="/" className="flex items-center gap-2 font-semibold">
@@ -64,16 +66,25 @@ export default function RootLayout({
               </Link>
               <nav className="flex items-center gap-5 text-[13px] text-[#0a0e1a]/75">
                 <Link href="#how" className="hidden md:inline hover:text-[#0a0e1a]">
-                  How it works
+                  How
                 </Link>
                 <Link href="#demo" className="hidden md:inline hover:text-[#0a0e1a]">
-                  Live demo
+                  Demo
                 </Link>
                 <Link href="#payments" className="hidden md:inline hover:text-[#0a0e1a]">
                   Payments
                 </Link>
+                <Link href="#economics" className="hidden md:inline hover:text-[#0a0e1a]">
+                  Economics
+                </Link>
                 <Link href="#compare" className="hidden md:inline hover:text-[#0a0e1a]">
                   vs. PSPs
+                </Link>
+                <Link href="#questions" className="hidden md:inline hover:text-[#0a0e1a]">
+                  Q&A
+                </Link>
+                <Link href="#integrate" className="hidden md:inline hover:text-[#0a0e1a]">
+                  Integrate
                 </Link>
                 <Link
                   href="https://github.com/ms1ny-hue/x402-ai-agent"

@@ -2,7 +2,10 @@ import { Hero } from "@/components/landing/hero";
 import { HowItWorks } from "@/components/landing/how-it-works";
 import { ChatDemo } from "@/components/landing/chat-demo";
 import { TransactionFeed } from "@/components/landing/transaction-feed";
+import { CostCalculator } from "@/components/landing/cost-calculator";
 import { Comparison } from "@/components/landing/comparison";
+import { OpenQuestions } from "@/components/landing/open-questions";
+import { IntegrationSnippet } from "@/components/landing/integration-snippet";
 import { getOrCreateSellerAccount } from "@/lib/accounts";
 
 export const dynamic = "force-dynamic";
@@ -24,7 +27,10 @@ export default async function Page() {
       <HowItWorks />
       <ChatDemo />
       <TransactionFeed />
+      <CostCalculator />
       <Comparison />
+      <OpenQuestions />
+      <IntegrationSnippet />
     </>
   );
 }
