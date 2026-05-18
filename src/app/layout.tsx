@@ -49,48 +49,51 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} antialiased bg-[#fbfaf7] text-[#0a0e1a]`}
+        className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} antialiased bg-[var(--x-bg)] text-[var(--x-text)] brushed`}
       >
         <div className="min-h-full flex flex-col">
           <DisclaimerBar />
-          <header className="sticky top-0 z-40 backdrop-blur-md bg-[#fbfaf7]/85 border-b border-[#0a0e1a]/10">
+          <header className="sticky top-0 z-40 backdrop-blur-md bg-[var(--x-bg)]/85 border-b border-[var(--x-border)]">
             <div className="max-w-6xl mx-auto flex items-center justify-between px-5 py-3">
               <Link href="/" className="flex items-center gap-2 font-semibold">
-                <span className="inline-block w-2 h-2 rounded-full bg-[#ff6b1a] animate-pulse" />
-                <span className="font-mono text-[13px] tracking-tight">
+                <span className="inline-block w-2 h-2 rounded-full bg-[var(--x-accent-bright)] animate-pulse shadow-[0_0_10px_rgba(56,189,248,0.7)]" />
+                <span className="font-mono text-[13px] tracking-tight text-[var(--x-text)]">
                   x402.demo
                 </span>
-                <span className="text-[11px] uppercase tracking-[0.18em] text-[#0a0e1a]/55 ml-2 border-l border-[#0a0e1a]/15 pl-2">
+                <span className="text-[10px] uppercase tracking-[0.22em] text-[var(--x-text-subtle)] ml-2 border-l border-[var(--x-border-bright)] pl-2">
                   testnet
                 </span>
               </Link>
-              <nav className="flex items-center gap-5 text-[13px] text-[#0a0e1a]/75">
-                <Link href="#how" className="hidden md:inline hover:text-[#0a0e1a]">
+              <nav className="flex items-center gap-4 text-[12px] text-[var(--x-text-muted)]">
+                <Link href="#how" className="hidden md:inline hover:text-[var(--x-text)]">
                   How
                 </Link>
-                <Link href="#demo" className="hidden md:inline hover:text-[#0a0e1a]">
+                <Link href="#demo" className="hidden md:inline hover:text-[var(--x-text)]">
                   Demo
                 </Link>
-                <Link href="#payments" className="hidden md:inline hover:text-[#0a0e1a]">
-                  Payments
+                <Link href="#payments" className="hidden md:inline hover:text-[var(--x-text)]">
+                  On-chain
                 </Link>
-                <Link href="#economics" className="hidden md:inline hover:text-[#0a0e1a]">
+                <Link href="#spec" className="hidden md:inline hover:text-[var(--x-text)]">
+                  Spec
+                </Link>
+                <Link href="#economics" className="hidden md:inline hover:text-[var(--x-text)]">
                   Economics
                 </Link>
-                <Link href="#compare" className="hidden md:inline hover:text-[#0a0e1a]">
-                  vs. PSPs
+                <Link href="#compare" className="hidden md:inline hover:text-[var(--x-text)]">
+                  vs PSPs
                 </Link>
-                <Link href="#questions" className="hidden md:inline hover:text-[#0a0e1a]">
-                  Q&A
+                <Link href="#questions" className="hidden md:inline hover:text-[var(--x-text)]">
+                  Q&amp;A
                 </Link>
-                <Link href="#integrate" className="hidden md:inline hover:text-[#0a0e1a]">
+                <Link href="#integrate" className="hidden md:inline hover:text-[var(--x-text)]">
                   Integrate
                 </Link>
                 <Link
                   href="https://github.com/ms1ny-hue/x402-ai-agent"
-                  className="rounded-full border border-[#0a0e1a]/20 px-3 py-1 hover:bg-[#0a0e1a] hover:text-[#fbfaf7] transition-colors"
+                  className="rounded-sm border border-[var(--x-border-bright)] px-2.5 py-1 hover:border-[var(--x-accent)] hover:text-[var(--x-accent)] transition-colors font-mono text-[11px] uppercase tracking-[0.18em]"
                 >
-                  GitHub
+                  Source
                 </Link>
               </nav>
             </div>
@@ -98,22 +101,22 @@ export default function RootLayout({
 
           <main className="flex-1">{children}</main>
 
-          <footer className="border-t border-[#0a0e1a]/10 mt-16">
-            <div className="max-w-6xl mx-auto px-5 py-8 text-[12px] text-[#0a0e1a]/55 flex flex-col gap-3">
+          <footer className="border-t border-[var(--x-border)] mt-16 bg-[var(--x-bg-elevated)]">
+            <div className="max-w-6xl mx-auto px-5 py-8 text-[12px] text-[var(--x-text-muted)] flex flex-col gap-3">
               <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-                <span className="font-mono text-[#0a0e1a]/80">x402.demo</span>
+                <span className="font-mono text-[var(--x-text)]">x402.demo</span>
                 <span>
-                  A portfolio prototype by Michael Stanat. Source on{" "}
+                  Portfolio prototype by Michael Stanat. Source on{" "}
                   <Link
                     href="https://github.com/ms1ny-hue/x402-ai-agent"
-                    className="underline"
+                    className="underline decoration-[var(--x-border-bright)] hover:text-[var(--x-accent)]"
                   >
                     GitHub
                   </Link>
                   .
                 </span>
               </div>
-              <p className="leading-relaxed max-w-4xl">
+              <p className="leading-relaxed max-w-4xl text-[var(--x-text-subtle)]">
                 Prototype output is synthetic and illustrative. Not investment
                 advice, not affiliated with any issuer, employer, or third
                 party. Third-party trademarks used nominatively for context.

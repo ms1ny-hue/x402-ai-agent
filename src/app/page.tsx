@@ -2,6 +2,7 @@ import { Hero } from "@/components/landing/hero";
 import { HowItWorks } from "@/components/landing/how-it-works";
 import { ChatDemo } from "@/components/landing/chat-demo";
 import { TransactionFeed } from "@/components/landing/transaction-feed";
+import { SpecSheet } from "@/components/landing/spec-sheet";
 import { CostCalculator } from "@/components/landing/cost-calculator";
 import { Comparison } from "@/components/landing/comparison";
 import { OpenQuestions } from "@/components/landing/open-questions";
@@ -27,6 +28,7 @@ export default async function Page() {
       <HowItWorks />
       <ChatDemo />
       <TransactionFeed />
+      <SpecSheet />
       <CostCalculator />
       <Comparison />
       <OpenQuestions />

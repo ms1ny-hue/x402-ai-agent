@@ -120,3 +120,70 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* x402.demo chrome / steel palette */
+:root {
+  --x-bg: #0a0d14;
+  --x-bg-elevated: #11151e;
+  --x-bg-elevated-2: #181d27;
+  --x-text: #e4e4e7;
+  --x-text-muted: #a1a1aa;
+  --x-text-subtle: #71717a;
+  --x-border: #27272a;
+  --x-border-bright: #3f3f46;
+  --x-accent: #7dd3fc;
+  --x-accent-bright: #38bdf8;
+  --x-chrome-1: #f4f4f5;
+  --x-chrome-2: #d4d4d8;
+  --x-chrome-3: #a1a1aa;
+  --x-chrome-4: #71717a;
+}
+
+.chrome-text {
+  background: linear-gradient(
+    180deg,
+    #f4f4f5 0%,
+    #e4e4e7 30%,
+    #a1a1aa 70%,
+    #d4d4d8 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.chrome-border {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--x-bg-elevated), var(--x-bg-elevated)) padding-box,
+    linear-gradient(
+        140deg,
+        #52525b 0%,
+        #a1a1aa 25%,
+        #3f3f46 55%,
+        #d4d4d8 80%,
+        #52525b 100%
+      )
+      border-box;
+}
+
+.brushed {
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.012) 0px,
+      rgba(255, 255, 255, 0.012) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    radial-gradient(
+      circle at top,
+      rgba(125, 211, 252, 0.05) 0%,
+      transparent 55%
+    );
+}
+
+.divider-x {
+  border-color: var(--x-border);
+}

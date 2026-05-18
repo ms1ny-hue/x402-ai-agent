@@ -88,33 +88,32 @@ export function ChatDemo() {
   };
 
   return (
-    <section id="demo" className="border-b border-[#0a0e1a]/10">
-      <div className="max-w-6xl mx-auto px-5 py-14 md:py-20">
-        <div className="flex items-baseline justify-between flex-wrap gap-3 mb-8">
+    <section id="demo" className="border-b border-[var(--x-border)]">
+      <div className="max-w-6xl mx-auto px-5 py-12 md:py-16">
+        <div className="flex items-baseline justify-between flex-wrap gap-3 mb-6">
           <div>
-            <p className="text-[11px] uppercase tracking-[0.18em] text-[#0a0e1a]/55 font-mono mb-3">
-              Live demo · click to trigger a payment
+            <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--x-text-subtle)] font-mono mb-3">
+              Live demo · click → settle on-chain
             </p>
-            <h2 className="font-serif text-3xl md:text-5xl leading-tight tracking-[-0.02em]">
-              An AI agent paying an API, <em>in real time.</em>
+            <h2 className="font-serif text-3xl md:text-5xl leading-tight tracking-[-0.025em] chrome-text">
+              Agent pays an API, in real time.
             </h2>
           </div>
-          <p className="text-sm text-[#0a0e1a]/65 max-w-md">
-            Each preset below issues an HTTP request to a paid MCP tool. The
-            server returns 402, the agent signs an EIP-3009 authorization,
-            the facilitator settles on-chain. Watch the result and the tx
-            hash appear together.
+          <p className="text-sm text-[var(--x-text-muted)] max-w-md font-mono">
+            Each preset issues a paid MCP request. Server 402 →
+            EIP-3009 sign → retry with X-PAYMENT → on-chain settlement
+            → tx hash. End-to-end in 2-4 seconds.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-[1fr_280px] gap-5">
-          <div className="border border-[#0a0e1a]/15 rounded-lg overflow-hidden bg-[#fbfaf7] flex flex-col">
-            <div className="border-b border-[#0a0e1a]/10 px-4 py-2.5 bg-[#0a0e1a] text-[#fbfaf7] flex items-center justify-between">
-              <div className="flex items-center gap-2 text-[11px] font-mono uppercase tracking-[0.18em]">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#56e0a0]" />
+        <div className="grid lg:grid-cols-[1fr_280px] gap-px bg-[var(--x-border)] border border-[var(--x-border)]">
+          <div className="overflow-hidden bg-[var(--x-bg-elevated)] flex flex-col">
+            <div className="border-b border-[var(--x-border)] px-4 py-2.5 bg-black text-[var(--x-chrome-2)] flex items-center justify-between">
+              <div className="flex items-center gap-2 text-[10.5px] font-mono uppercase tracking-[0.22em]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--x-accent-bright)] animate-pulse shadow-[0_0_8px_rgba(56,189,248,0.7)]" />
                 Agent terminal
               </div>
-              <div className="text-[11px] font-mono text-[#fbfaf7]/60">
+              <div className="text-[10.5px] font-mono text-[var(--x-text-subtle)]">
                 eip155:84532 · USDC
               </div>
             </div>
@@ -122,7 +121,7 @@ export function ChatDemo() {
             <Conversation className="min-h-[420px] max-h-[640px]">
               <ConversationContent>
                 {messages.length === 0 && (
-                  <div className="px-2 py-8 text-center text-sm text-[#0a0e1a]/55">
+                  <div className="px-2 py-8 text-center text-sm text-[var(--x-text-subtle)] font-mono">
                     Click a preset below to issue a paid request.
                   </div>
                 )}
@@ -204,15 +203,15 @@ export function ChatDemo() {
                 })}
                 {status === "submitted" && <Loader />}
                 {status === "error" && (
-                  <div className="text-sm text-red-700 px-2 py-3">
-                    The agent stream errored. Check Vercel runtime logs.
+                  <div className="text-sm text-amber-300 px-2 py-3 font-mono">
+                    Agent stream errored. Check Vercel runtime logs.
                   </div>
                 )}
               </ConversationContent>
               <ConversationScrollButton />
             </Conversation>
 
-            <div className="border-t border-[#0a0e1a]/10 px-3 py-3">
+            <div className="border-t border-[var(--x-border)] px-3 py-3 bg-[var(--x-bg)]">
               <Suggestions className="justify-start">
                 {Object.keys(suggestions).map((s) => (
                   <Suggestion
@@ -257,7 +256,7 @@ export function ChatDemo() {
             </div>
           </div>
 
-          <aside className="space-y-4 text-sm">
+          <aside className="space-y-px text-sm bg-[var(--x-border)] flex flex-col">
             <ToolCard
               name="get_equity_research"
               price="0.005 USDC"
@@ -306,22 +305,24 @@ function ToolCard({
   detail: string;
 }) {
   return (
-    <div className="border border-[#0a0e1a]/15 rounded-lg p-3 bg-[#fbfaf7]">
+    <div className="p-3 bg-[var(--x-bg)] flex-1">
       <div className="flex items-center justify-between mb-1.5">
-        <code className="text-xs font-mono text-[#0a0e1a]">{name}</code>
+        <code className="text-xs font-mono text-[var(--x-text)]">{name}</code>
         <span
-          className={`text-[10px] font-mono uppercase tracking-[0.18em] px-1.5 py-0.5 rounded ${kind === "paid" ? "bg-[#ff6b1a]/15 text-[#ff6b1a]" : "bg-[#56e0a0]/20 text-[#0a0e1a]/70"}`}
+          className={`text-[9.5px] font-mono uppercase tracking-[0.22em] px-1.5 py-0.5 ${kind === "paid" ? "border border-[var(--x-accent)]/40 text-[var(--x-accent)]" : "border border-[var(--x-border-bright)] text-[var(--x-text-subtle)]"}`}
         >
           {kind === "paid" ? "paid" : "free"}
         </span>
       </div>
-      <div className="font-mono text-xs text-[#0a0e1a]/80 mb-1.5">
+      <div className="font-mono text-xs text-[var(--x-text)] mb-1.5">
         {price}
         {priceAtomic && (
-          <span className="text-[#0a0e1a]/45"> · {priceAtomic} atomic</span>
+          <span className="text-[var(--x-text-subtle)]"> · {priceAtomic} atomic</span>
         )}
       </div>
-      <p className="text-xs text-[#0a0e1a]/65 leading-relaxed">{detail}</p>
+      <p className="text-[11px] text-[var(--x-text-subtle)] leading-relaxed font-mono">
+        {detail}
+      </p>
     </div>
   );
 }

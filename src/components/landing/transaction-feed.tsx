@@ -88,64 +88,61 @@ export function TransactionFeed() {
   }, []);
 
   return (
-    <section id="payments" className="border-b border-[#0a0e1a]/10">
-      <div className="max-w-6xl mx-auto px-5 py-14 md:py-20">
+    <section id="payments" className="border-b border-[var(--x-border)] bg-[var(--x-bg-elevated)]">
+      <div className="max-w-6xl mx-auto px-5 py-12 md:py-16">
         <div className="flex items-baseline justify-between flex-wrap gap-3 mb-6">
           <div>
-            <p className="text-[11px] uppercase tracking-[0.18em] text-[#0a0e1a]/55 font-mono mb-3">
-              On-chain settlement log · live proof
+            <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--x-text-subtle)] font-mono mb-3">
+              On-chain settlement log
             </p>
-            <h2 className="font-serif text-3xl md:text-5xl leading-tight tracking-[-0.02em]">
-              Real USDC, real blocks. <em>Live from Base Sepolia.</em>
+            <h2 className="font-serif text-3xl md:text-5xl leading-tight tracking-[-0.025em] chrome-text">
+              Real blocks. Verifiable in one click.
             </h2>
           </div>
-          <p className="text-sm text-[#0a0e1a]/65 max-w-md">
-            Every paid tool call below has a corresponding USDC Transfer to
-            the seller wallet, mined on Base Sepolia. Click any hash to
-            verify on Basescan.
+          <p className="text-sm text-[var(--x-text-muted)] max-w-md font-mono">
+            Every paid call below produced a USDC Transfer to the seller
+            wallet. Each hash links to the block on Basescan.
           </p>
         </div>
 
         {data && data.transactions.length > 0 && (
-          <div className="mb-6 border border-[#ff6b1a]/40 bg-[#ff6b1a]/5 rounded-lg p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-            <div className="text-sm text-[#0a0e1a] flex items-baseline gap-2 flex-wrap">
-              <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#ff6b1a]">
-                Proof of realness
+          <div className="mb-6 border border-[var(--x-accent)]/40 bg-[var(--x-accent)]/5 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div className="text-sm text-[var(--x-text)] flex items-baseline gap-2 flex-wrap font-mono">
+              <span className="text-[10px] uppercase tracking-[0.22em] text-[var(--x-accent)]">
+                Latest
               </span>
               <span>
-                The most recent payment settled{" "}
                 <span className="tabular-nums">
                   {Number(data.transactions[0].amountUsdc).toFixed(3)} USDC
                 </span>{" "}
-                on Base Sepolia{" "}
-                {relativeTime(data.transactions[0].timestamp)}, in block{" "}
-                <span className="font-mono">
-                  {Number(data.transactions[0].blockNumber).toLocaleString()}
-                </span>
-                . You can verify the tx directly on Basescan.
+                · block{" "}
+                {Number(data.transactions[0].blockNumber).toLocaleString()}{" "}
+                · {relativeTime(data.transactions[0].timestamp)} · buyer{" "}
+                {shortAddr(data.transactions[0].from)}
               </span>
             </div>
             <a
               href={`https://sepolia.basescan.org/tx/${data.transactions[0].txHash}`}
               target="_blank"
               rel="noreferrer"
-              className="self-start md:self-auto rounded-full bg-[#ff6b1a] text-[#fbfaf7] text-xs font-mono px-3 py-1.5 hover:bg-[#0a0e1a] transition-colors whitespace-nowrap"
+              className="self-start md:self-auto rounded-sm bg-[var(--x-accent)] text-black text-[11px] font-mono uppercase tracking-[0.18em] px-3 py-1.5 hover:bg-[var(--x-chrome-1)] transition-colors whitespace-nowrap"
             >
-              Verify latest tx ↗
+              Verify on Basescan ↗
             </a>
           </div>
         )}
 
         {data && (
           <>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[var(--x-border)] border border-[var(--x-border)] mb-4">
               <BigStat
                 label="Total received"
                 value={
                   data.aggregate
-                    ? `${Number(data.aggregate.totalUsdc).toFixed(3)} USDC`
+                    ? `${Number(data.aggregate.totalUsdc).toFixed(3)}`
                     : "—"
                 }
+                suffix="USDC"
                 sub={
                   data.aggregate
                     ? `${Number(data.aggregate.totalAtomic).toLocaleString()} atomic`
@@ -153,7 +150,7 @@ export function TransactionFeed() {
                 }
               />
               <BigStat
-                label="On-chain settlements"
+                label="Settlements"
                 value={
                   data.aggregate ? data.aggregate.txCount.toString() : "—"
                 }
@@ -176,101 +173,103 @@ export function TransactionFeed() {
                 label="Wallet balance"
                 value={
                   data.aggregate
-                    ? `${Number(data.aggregate.currentBalanceUsdc).toFixed(3)} USDC`
+                    ? `${Number(data.aggregate.currentBalanceUsdc).toFixed(3)}`
                     : "—"
                 }
-                sub="auto-refills from faucet"
+                suffix="USDC"
+                sub="auto-faucet < 0.5"
               />
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 text-xs font-mono">
-              <FieldStrip label="Network" value="eip155:84532" />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[var(--x-border)] border border-[var(--x-border)] mb-6">
+              <FieldStrip label="network" value="eip155:84532" />
               <FieldStrip
-                label="Asset"
-                value={`USDC (${shortAddr(data.asset)})`}
+                label="asset"
+                value={`USDC ${shortAddr(data.asset)}`}
               />
               <FieldStrip
-                label="Seller wallet"
+                label="seller"
                 value={shortAddr(data.sellerAddress)}
               />
-              <FieldStrip label="Decimals" value="6" />
+              <FieldStrip label="decimals" value="6" />
             </div>
           </>
         )}
 
-        <div className="border border-[#0a0e1a]/15 rounded-lg overflow-hidden bg-[#fbfaf7]">
-          <div className="flex items-center justify-between border-b border-[#0a0e1a]/10 px-4 py-2.5 bg-[#0a0e1a] text-[#fbfaf7]">
-            <div className="flex items-center gap-2 text-[11px] font-mono uppercase tracking-[0.18em]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#56e0a0] animate-pulse" />
-              Live · polling 15s
+        <div className="border border-[var(--x-border-bright)] bg-[var(--x-bg)]">
+          <div className="flex items-center justify-between border-b border-[var(--x-border)] px-4 py-2.5 bg-black text-[var(--x-chrome-2)]">
+            <div className="flex items-center gap-2 text-[10.5px] font-mono uppercase tracking-[0.22em]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--x-accent-bright)] animate-pulse shadow-[0_0_8px_rgba(56,189,248,0.7)]" />
+              Live · 15s poll
             </div>
-            <div className="text-[11px] font-mono">
+            <div className="text-[10.5px] font-mono text-[var(--x-text-subtle)]">
               {data?.transactions.length ?? 0} recent transfers
             </div>
           </div>
 
           {loading && (
-            <div className="px-4 py-10 text-center text-sm text-[#0a0e1a]/55 font-mono">
+            <div className="px-4 py-10 text-center text-sm text-[var(--x-text-subtle)] font-mono">
               Reading Base Sepolia state…
             </div>
           )}
 
           {error && !loading && (
-            <div className="px-4 py-10 text-center text-sm text-[#0a0e1a]/55">
+            <div className="px-4 py-10 text-center text-sm text-[var(--x-text-subtle)] font-mono">
               Could not load on-chain log: {error}
             </div>
           )}
 
           {!loading && !error && data && data.transactions.length === 0 && (
-            <div className="px-4 py-10 text-center text-sm text-[#0a0e1a]/55">
-              No transfers in the last 5,000 blocks. Trigger one with the demo
-              below.
+            <div className="px-4 py-10 text-center text-sm text-[var(--x-text-subtle)] font-mono">
+              No transfers in window. Trigger one in the demo above.
             </div>
           )}
 
           {!loading && !error && data && data.transactions.length > 0 && (
             <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[560px]">
-              <thead>
-                <tr className="text-[10.5px] font-mono uppercase tracking-[0.18em] text-[#0a0e1a]/55 border-b border-[#0a0e1a]/10">
-                  <th className="text-left px-4 py-2 font-normal">When</th>
-                  <th className="text-left px-4 py-2 font-normal">Buyer</th>
-                  <th className="text-right px-4 py-2 font-normal">Amount</th>
-                  <th className="text-left px-4 py-2 font-normal">Tx hash</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.transactions.map((tx) => (
-                  <tr
-                    key={tx.txHash}
-                    className="border-b border-[#0a0e1a]/5 last:border-0 hover:bg-[#f5f1e8]/40"
-                  >
-                    <td className="px-4 py-2.5 font-mono text-xs text-[#0a0e1a]/65">
-                      {relativeTime(tx.timestamp)}
-                    </td>
-                    <td className="px-4 py-2.5 font-mono text-xs">
-                      {shortAddr(tx.from)}
-                    </td>
-                    <td className="px-4 py-2.5 font-mono text-xs text-right tabular-nums">
-                      <span className="text-[#0a0e1a]">{tx.amountUsdc}</span>
-                      <span className="text-[#0a0e1a]/40"> USDC</span>
-                      <div className="text-[10px] text-[#0a0e1a]/40">
-                        {Number(tx.amountAtomic).toLocaleString()} atomic
-                      </div>
-                    </td>
-                    <td className="px-4 py-2.5 font-mono text-xs">
-                      <a
-                        href={`https://sepolia.basescan.org/tx/${tx.txHash}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-[#ff6b1a] hover:underline"
-                      >
-                        {shortTx(tx.txHash)} ↗
-                      </a>
-                    </td>
+              <table className="w-full text-sm min-w-[560px] font-mono">
+                <thead>
+                  <tr className="text-[10px] uppercase tracking-[0.22em] text-[var(--x-text-subtle)] border-b border-[var(--x-border)]">
+                    <th className="text-left px-4 py-2 font-normal">when</th>
+                    <th className="text-left px-4 py-2 font-normal">buyer</th>
+                    <th className="text-right px-4 py-2 font-normal">amount</th>
+                    <th className="text-left px-4 py-2 font-normal">tx hash</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {data.transactions.map((tx) => (
+                    <tr
+                      key={tx.txHash}
+                      className="border-b border-[var(--x-border)] last:border-0 hover:bg-[var(--x-bg-elevated)]"
+                    >
+                      <td className="px-4 py-2.5 text-xs text-[var(--x-text-muted)]">
+                        {relativeTime(tx.timestamp)}
+                      </td>
+                      <td className="px-4 py-2.5 text-xs text-[var(--x-text-muted)]">
+                        {shortAddr(tx.from)}
+                      </td>
+                      <td className="px-4 py-2.5 text-xs text-right tabular-nums">
+                        <span className="text-[var(--x-text)]">
+                          {tx.amountUsdc}
+                        </span>
+                        <span className="text-[var(--x-text-subtle)]"> USDC</span>
+                        <div className="text-[10px] text-[var(--x-text-subtle)]">
+                          {Number(tx.amountAtomic).toLocaleString()} atomic
+                        </div>
+                      </td>
+                      <td className="px-4 py-2.5 text-xs">
+                        <a
+                          href={`https://sepolia.basescan.org/tx/${tx.txHash}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-[var(--x-accent)] hover:underline"
+                        >
+                          {shortTx(tx.txHash)} ↗
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
         </div>
@@ -281,11 +280,11 @@ export function TransactionFeed() {
 
 function FieldStrip({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border border-[#0a0e1a]/10 rounded p-2.5 bg-[#fbfaf7]">
-      <div className="text-[9.5px] uppercase tracking-[0.18em] text-[#0a0e1a]/55 mb-1">
+    <div className="bg-[var(--x-bg)] p-2.5">
+      <div className="text-[9.5px] uppercase tracking-[0.22em] text-[var(--x-text-subtle)] font-mono mb-1">
         {label}
       </div>
-      <div className="text-[#0a0e1a]">{value}</div>
+      <div className="text-[var(--x-text)] font-mono text-xs">{value}</div>
     </div>
   );
 }
@@ -293,21 +292,30 @@ function FieldStrip({ label, value }: { label: string; value: string }) {
 function BigStat({
   label,
   value,
+  suffix,
   sub,
 }: {
   label: string;
   value: string;
+  suffix?: string;
   sub: string;
 }) {
   return (
-    <div className="border border-[#0a0e1a]/10 rounded-lg p-4 bg-[#fbfaf7]">
-      <div className="text-[10px] uppercase tracking-[0.18em] text-[#0a0e1a]/55 font-mono mb-2">
+    <div className="bg-[var(--x-bg)] p-4">
+      <div className="text-[10px] uppercase tracking-[0.22em] text-[var(--x-text-subtle)] font-mono mb-2">
         {label}
       </div>
-      <div className="font-serif text-2xl md:text-3xl leading-none mb-1.5 tabular-nums">
+      <div className="font-serif text-2xl md:text-3xl leading-none mb-1.5 tabular-nums chrome-text">
         {value}
+        {suffix && (
+          <span className="text-[var(--x-text-subtle)] font-mono text-base ml-1">
+            {suffix}
+          </span>
+        )}
       </div>
-      <div className="text-[11px] font-mono text-[#0a0e1a]/50">{sub}</div>
+      <div className="text-[11px] font-mono text-[var(--x-text-subtle)]">
+        {sub}
+      </div>
     </div>
   );
 }

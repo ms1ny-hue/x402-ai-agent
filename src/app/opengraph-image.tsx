@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
 export const alt =
-  "x402.demo — payment rails for software, not for humans with cards";
+  "x402.demo — per-call settlement over plain HTTP";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -16,12 +16,20 @@ export default async function OpengraphImage() {
           width: "100%",
           height: "100%",
           padding: "70px",
-          background: "#fbfaf7",
-          color: "#0a0e1a",
+          background: "#0a0d14",
+          color: "#e4e4e7",
           fontFamily: "sans-serif",
           position: "relative",
         }}
       >
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background:
+              "radial-gradient(circle at 25% 0%, rgba(125,211,252,0.18), transparent 55%)",
+          }}
+        />
         <div
           style={{
             display: "flex",
@@ -29,7 +37,8 @@ export default async function OpengraphImage() {
             gap: "14px",
             fontSize: 22,
             fontFamily: "monospace",
-            color: "#0a0e1a",
+            color: "#e4e4e7",
+            zIndex: 1,
           }}
         >
           <div
@@ -37,17 +46,18 @@ export default async function OpengraphImage() {
               width: 14,
               height: 14,
               borderRadius: "9999px",
-              background: "#ff6b1a",
+              background: "#38bdf8",
+              boxShadow: "0 0 16px rgba(56,189,248,0.7)",
             }}
           />
           <div>x402.demo</div>
           <div
             style={{
               fontSize: 14,
-              color: "rgba(10,14,26,0.55)",
-              borderLeft: "1px solid rgba(10,14,26,0.2)",
+              color: "rgba(228,228,231,0.55)",
+              borderLeft: "1px solid rgba(228,228,231,0.2)",
               paddingLeft: "12px",
-              letterSpacing: 4,
+              letterSpacing: 5,
               textTransform: "uppercase",
             }}
           >
@@ -61,53 +71,53 @@ export default async function OpengraphImage() {
             flexDirection: "column",
             marginTop: "auto",
             marginBottom: "auto",
+            zIndex: 1,
           }}
         >
           <div
             style={{
-              fontSize: 30,
-              color: "rgba(10,14,26,0.55)",
+              fontSize: 26,
+              color: "rgba(228,228,231,0.65)",
               fontFamily: "monospace",
-              letterSpacing: 4,
+              letterSpacing: 5,
               textTransform: "uppercase",
-              marginBottom: 24,
+              marginBottom: 30,
             }}
           >
-            x402 protocol · EIP-3009 · Base Sepolia
+            HTTP 402 · EIP-3009 · USDC · BASE-SEPOLIA
           </div>
 
           <div
             style={{
-              fontSize: 88,
+              fontSize: 96,
               lineHeight: 0.95,
-              letterSpacing: -2,
+              letterSpacing: -3,
               fontFamily: "serif",
-              maxWidth: "1000px",
+              maxWidth: "1050px",
               display: "flex",
               flexDirection: "column",
+              backgroundImage:
+                "linear-gradient(180deg, #f4f4f5 0%, #d4d4d8 40%, #a1a1aa 75%, #d4d4d8 100%)",
+              backgroundClip: "text",
+              color: "transparent",
             }}
           >
-            <span>Payment rails for</span>
-            <span>
-              <span style={{ fontStyle: "italic", color: "#ff6b1a" }}>
-                software
-              </span>
-              , not for humans
-            </span>
-            <span>with cards.</span>
+            <span>Per-call settlement</span>
+            <span style={{ fontStyle: "italic" }}>over plain HTTP.</span>
           </div>
 
           <div
             style={{
-              fontSize: 26,
-              lineHeight: 1.35,
-              color: "rgba(10,14,26,0.7)",
+              fontSize: 22,
+              lineHeight: 1.4,
+              color: "rgba(228,228,231,0.7)",
               maxWidth: "900px",
-              marginTop: 30,
+              marginTop: 36,
+              fontFamily: "monospace",
             }}
           >
-            A working portfolio prototype where an AI agent pays a research
-            API in stablecoin per call, in seconds, for fractions of a cent.
+            Buyer hits 402. Signs an EIP-3009 USDC authorization. Facilitator
+            settles on-chain. ~3 seconds, fractions of a cent, no card.
           </div>
         </div>
 
@@ -118,7 +128,8 @@ export default async function OpengraphImage() {
             alignItems: "flex-end",
             fontSize: 18,
             fontFamily: "monospace",
-            color: "rgba(10,14,26,0.65)",
+            color: "rgba(228,228,231,0.6)",
+            zIndex: 1,
           }}
         >
           <div>x402-ai-agent-zeta.vercel.app</div>

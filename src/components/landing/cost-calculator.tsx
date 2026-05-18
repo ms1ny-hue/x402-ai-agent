@@ -36,26 +36,25 @@ export function CostCalculator() {
   const pspViable = price >= 0.5;
 
   return (
-    <section id="economics" className="border-b border-[#0a0e1a]/10 bg-[#f5f1e8]/50">
-      <div className="max-w-6xl mx-auto px-5 py-14 md:py-20">
-        <div className="flex items-baseline justify-between flex-wrap gap-3 mb-8">
+    <section id="economics" className="border-b border-[var(--x-border)]">
+      <div className="max-w-6xl mx-auto px-5 py-12 md:py-16">
+        <div className="flex items-baseline justify-between flex-wrap gap-3 mb-6">
           <div>
-            <p className="text-[11px] uppercase tracking-[0.18em] text-[#0a0e1a]/55 font-mono mb-3">
-              Unit economics calculator
+            <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--x-text-subtle)] font-mono mb-3">
+              Unit economics
             </p>
-            <h2 className="font-serif text-3xl md:text-5xl leading-tight tracking-[-0.02em]">
-              When the rail <em>actually matters.</em>
+            <h2 className="font-serif text-3xl md:text-5xl leading-tight tracking-[-0.025em] chrome-text">
+              When the rail actually matters.
             </h2>
           </div>
-          <p className="text-sm text-[#0a0e1a]/65 max-w-md">
-            Plug in a usage pattern. The numbers below are the marginal cost
-            of accepting payment, not the cost of building or operating the
-            underlying service.
+          <p className="text-sm text-[var(--x-text-muted)] max-w-md font-mono">
+            Marginal cost of accepting payment. Not the cost of operating
+            the underlying service.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-[320px_1fr] gap-5">
-          <div className="border border-[#0a0e1a]/15 rounded-lg p-5 bg-[#fbfaf7] flex flex-col gap-4">
+        <div className="grid lg:grid-cols-[320px_1fr] gap-px bg-[var(--x-border)] border border-[var(--x-border)]">
+          <div className="bg-[var(--x-bg-elevated)] p-5 flex flex-col gap-4">
             <Field
               label="Monthly API calls"
               value={calls}
@@ -73,36 +72,35 @@ export function CostCalculator() {
               max={100}
               step={0.001}
             />
-            <div className="text-[11px] text-[#0a0e1a]/55 leading-relaxed pt-2 border-t border-[#0a0e1a]/10">
-              PSP assumption: 2.9% + $0.30 (typical online card-not-present).
-              x402 assumption: ~5 mils per call (Base gas) + 10 bps
-              facilitator. Both are illustrative ranges, not vendor quotes.
+            <div className="text-[10.5px] text-[var(--x-text-subtle)] leading-relaxed pt-3 border-t border-[var(--x-border)] font-mono">
+              PSP: 2.9% + $0.30 (CNP card). x402: ~5 mils gas + 10 bps
+              facilitator. Illustrative ranges, not vendor quotes.
             </div>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-5">
+          <div className="grid sm:grid-cols-2 gap-px bg-[var(--x-border)]">
             <ResultCard
               label="Card-network PSP"
-              accent="#0a0e1a"
+              accent="var(--x-text)"
               principal={principal}
               fees={pspFees}
               marginalPct={pspMarginalPct}
               note={
                 pspViable
                   ? "Within typical PSP economics."
-                  : "Per-call price below ~$0.50 — fixed component dominates, unit economics break."
+                  : "Per-call price < $0.50: fixed component dominates. Unit economics break."
               }
               warn={!pspViable}
             />
             <ResultCard
               label="x402 (USDC on Base)"
-              accent="#ff6b1a"
+              accent="var(--x-accent)"
               principal={principal}
               fees={x402Fees}
               marginalPct={x402MarginalPct}
               note={
                 price < 0.0001
-                  ? "Below the practical minimum (100 atomic USDC units)."
+                  ? "Below 100 atomic USDC. Facilitator math breaks."
                   : "Within typical x402 economics."
               }
               warn={price < 0.0001}
@@ -110,21 +108,20 @@ export function CostCalculator() {
           </div>
         </div>
 
-        <div className="mt-5 border border-[#0a0e1a]/15 rounded-lg p-5 bg-[#0a0e1a] text-[#fbfaf7] flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <div className="mt-px bg-black text-[var(--x-chrome-1)] border border-[var(--x-border)] border-t-0 p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div>
-            <div className="text-[10px] uppercase tracking-[0.18em] text-[#fbfaf7]/55 font-mono mb-1">
-              Difference, monthly
+            <div className="text-[10px] uppercase tracking-[0.22em] text-[var(--x-text-subtle)] font-mono mb-1">
+              Monthly delta
             </div>
-            <div className="font-serif text-3xl md:text-4xl tabular-nums">
+            <div className="font-serif text-3xl md:text-4xl tabular-nums chrome-text">
               {savings >= 0 ? "x402 saves " : "PSP saves "}
               {formatUsd(Math.abs(savings))}
             </div>
           </div>
-          <div className="text-sm text-[#fbfaf7]/70 max-w-md leading-relaxed">
-            Treat this as a directional comparison, not a quote. Real-world
-            PSP rates depend on merchant category, region, and contract
-            tier; real-world x402 fees depend on facilitator pricing and
-            chain gas at settlement time.
+          <div className="text-[12px] text-[var(--x-text-subtle)] max-w-md leading-relaxed font-mono">
+            Directional comparison. Real PSP rates depend on MCC, region,
+            contract tier. Real x402 fees depend on facilitator pricing
+            and chain gas at settlement.
           </div>
         </div>
       </div>
@@ -151,7 +148,7 @@ function Field({
 }) {
   return (
     <label className="flex flex-col gap-1.5">
-      <span className="text-[10px] uppercase tracking-[0.18em] text-[#0a0e1a]/55 font-mono">
+      <span className="text-[10px] uppercase tracking-[0.22em] text-[var(--x-text-subtle)] font-mono">
         {label}
       </span>
       <input
@@ -164,7 +161,7 @@ function Field({
           const n = parseFloat(e.target.value);
           if (!Number.isNaN(n)) onChange(n);
         }}
-        className="border border-[#0a0e1a]/20 rounded px-3 py-2 font-mono text-sm tabular-nums bg-[#fbfaf7] focus:outline-none focus:border-[#ff6b1a]"
+        className="border border-[var(--x-border-bright)] rounded-sm px-3 py-2 font-mono text-sm tabular-nums bg-[var(--x-bg)] text-[var(--x-text)] focus:outline-none focus:border-[var(--x-accent)]"
       />
     </label>
   );
@@ -188,45 +185,47 @@ function ResultCard({
   warn?: boolean;
 }) {
   return (
-    <div className="border border-[#0a0e1a]/15 rounded-lg p-5 bg-[#fbfaf7] flex flex-col gap-3">
+    <div className="bg-[var(--x-bg-elevated)] p-5 flex flex-col gap-3">
       <div className="flex items-center gap-2">
         <span
           className="w-1.5 h-1.5 rounded-full"
           style={{ backgroundColor: accent }}
         />
-        <div className="text-[11px] uppercase tracking-[0.18em] text-[#0a0e1a]/55 font-mono">
+        <div className="text-[10px] uppercase tracking-[0.22em] text-[var(--x-text-subtle)] font-mono">
           {label}
         </div>
       </div>
       <div>
-        <div className="text-[10px] uppercase tracking-[0.18em] text-[#0a0e1a]/45 font-mono mb-1">
-          Fees this month
+        <div className="text-[10px] uppercase tracking-[0.22em] text-[var(--x-text-subtle)] font-mono mb-1">
+          Fees / month
         </div>
         <div
-          className="font-serif text-3xl md:text-4xl tabular-nums leading-none"
+          className="font-serif text-3xl md:text-4xl tabular-nums leading-none chrome-text"
           style={{ color: accent }}
         >
           {formatUsd(fees)}
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-3 text-xs">
+      <div className="grid grid-cols-2 gap-3 text-xs font-mono">
         <div>
-          <div className="text-[10px] uppercase tracking-[0.18em] text-[#0a0e1a]/45 font-mono mb-1">
+          <div className="text-[10px] uppercase tracking-[0.22em] text-[var(--x-text-subtle)] mb-1">
             Principal
           </div>
-          <div className="font-mono tabular-nums">{formatUsd(principal)}</div>
+          <div className="tabular-nums text-[var(--x-text)]">
+            {formatUsd(principal)}
+          </div>
         </div>
         <div>
-          <div className="text-[10px] uppercase tracking-[0.18em] text-[#0a0e1a]/45 font-mono mb-1">
-            Effective rate
+          <div className="text-[10px] uppercase tracking-[0.22em] text-[var(--x-text-subtle)] mb-1">
+            Effective
           </div>
-          <div className="font-mono tabular-nums">
+          <div className="tabular-nums text-[var(--x-text)]">
             {marginalPct.toFixed(2)}%
           </div>
         </div>
       </div>
       <p
-        className={`text-xs leading-relaxed mt-1 ${warn ? "text-[#a14400]" : "text-[#0a0e1a]/60"}`}
+        className={`text-[11px] leading-relaxed mt-1 font-mono ${warn ? "text-amber-300" : "text-[var(--x-text-subtle)]"}`}
       >
         {note}
       </p>

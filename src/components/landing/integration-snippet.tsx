@@ -45,54 +45,54 @@ const tools = await mcp.tools();
 
 export function IntegrationSnippet() {
   return (
-    <section id="integrate" className="border-b border-[#0a0e1a]/10 bg-[#f5f1e8]/50">
-      <div className="max-w-6xl mx-auto px-5 py-14 md:py-20">
-        <div className="flex items-baseline justify-between flex-wrap gap-3 mb-8">
+    <section id="integrate" className="border-b border-[var(--x-border)]">
+      <div className="max-w-6xl mx-auto px-5 py-12 md:py-16">
+        <div className="flex items-baseline justify-between flex-wrap gap-3 mb-6">
           <div>
-            <p className="text-[11px] uppercase tracking-[0.18em] text-[#0a0e1a]/55 font-mono mb-3">
-              Use it in your own app
+            <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--x-text-subtle)] font-mono mb-3">
+              Integrate
             </p>
-            <h2 className="font-serif text-3xl md:text-5xl leading-tight tracking-[-0.02em]">
-              Two files. <em>That is the whole integration.</em>
+            <h2 className="font-serif text-3xl md:text-5xl leading-tight tracking-[-0.025em] chrome-text">
+              Two files. That is the integration.
             </h2>
           </div>
-          <p className="text-sm text-[#0a0e1a]/65 max-w-md">
-            A Next.js seller exposes paid MCP tools in one route. A buyer
-            wires up <code className="font-mono">withPayment</code> around
-            an MCP client. Coinbase CDP provisions both wallets, and the
-            facilitator settles on-chain.
+          <p className="text-sm text-[var(--x-text-muted)] max-w-md font-mono">
+            Next.js seller exposes paid MCP tools in one route. Buyer wraps{" "}
+            <code className="text-[var(--x-accent)]">withPayment</code>{" "}
+            around an MCP client. CDP provisions wallets; facilitator
+            settles.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-5">
+        <div className="grid lg:grid-cols-2 gap-px bg-[var(--x-border)] border border-[var(--x-border)]">
           <SnippetCard
-            label="Seller (exposes paid tools)"
+            label="Seller"
             filename="app/mcp/route.ts"
             code={serverSnippet}
           />
           <SnippetCard
-            label="Buyer (wraps the MCP client)"
+            label="Buyer"
             filename="app/api/chat/route.ts"
             code={clientSnippet}
           />
         </div>
 
-        <div className="mt-5 flex flex-wrap gap-3 text-sm">
+        <div className="mt-5 flex flex-wrap gap-2 text-sm">
           <Link
             href="https://github.com/ms1ny-hue/x402-ai-agent"
-            className="rounded-full border border-[#0a0e1a]/25 px-4 py-2 hover:bg-[#0a0e1a] hover:text-[#fbfaf7] transition-colors font-mono text-xs"
+            className="rounded-sm border border-[var(--x-border-bright)] text-[var(--x-text)] px-4 py-2 hover:border-[var(--x-accent)] hover:text-[var(--x-accent)] transition-colors font-mono text-[11px] uppercase tracking-[0.18em]"
           >
-            Full source on GitHub ↗
+            Source ↗
           </Link>
           <Link
             href="https://docs.x402.org/getting-started/quickstart-for-sellers"
-            className="rounded-full border border-[#0a0e1a]/25 px-4 py-2 hover:bg-[#0a0e1a] hover:text-[#fbfaf7] transition-colors font-mono text-xs"
+            className="rounded-sm border border-[var(--x-border-bright)] text-[var(--x-text)] px-4 py-2 hover:border-[var(--x-accent)] hover:text-[var(--x-accent)] transition-colors font-mono text-[11px] uppercase tracking-[0.18em]"
           >
             x402 docs ↗
           </Link>
           <Link
             href="https://www.npmjs.com/package/x402-mcp"
-            className="rounded-full border border-[#0a0e1a]/25 px-4 py-2 hover:bg-[#0a0e1a] hover:text-[#fbfaf7] transition-colors font-mono text-xs"
+            className="rounded-sm border border-[var(--x-border-bright)] text-[var(--x-text)] px-4 py-2 hover:border-[var(--x-accent)] hover:text-[var(--x-accent)] transition-colors font-mono text-[11px] uppercase tracking-[0.18em]"
           >
             x402-mcp on npm ↗
           </Link>
@@ -112,16 +112,16 @@ function SnippetCard({
   code: string;
 }) {
   return (
-    <div className="border border-[#0a0e1a]/15 rounded-lg overflow-hidden bg-[#fbfaf7]">
-      <div className="flex items-center justify-between border-b border-[#0a0e1a]/10 px-3 py-2 bg-[#0a0e1a] text-[#fbfaf7]">
-        <div className="text-[10.5px] font-mono uppercase tracking-[0.18em]">
+    <div className="bg-[var(--x-bg-elevated)] overflow-hidden">
+      <div className="flex items-center justify-between border-b border-[var(--x-border)] px-3 py-2 bg-black text-[var(--x-chrome-2)]">
+        <div className="text-[10.5px] font-mono uppercase tracking-[0.22em]">
           {label}
         </div>
-        <code className="text-[11px] font-mono text-[#fbfaf7]/70">
+        <code className="text-[11px] font-mono text-[var(--x-text-subtle)]">
           {filename}
         </code>
       </div>
-      <pre className="bg-[#0a0e1a] text-[#fbfaf7]/90 font-mono text-[11px] leading-relaxed p-4 overflow-x-auto">
+      <pre className="bg-black text-[var(--x-chrome-2)] font-mono text-[11px] leading-relaxed p-4 overflow-x-auto">
         <code>{code}</code>
       </pre>
     </div>

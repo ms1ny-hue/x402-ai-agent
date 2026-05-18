@@ -7,90 +7,86 @@ interface Row {
 const rows: Row[] = [
   {
     dimension: "Rails",
-    psp: "Card networks (Visa, Mastercard), ACH",
-    x402: "USDC on Base or Solana (EVM / SVM)",
+    psp: "Visa / Mastercard / ACH",
+    x402: "USDC on Base or Solana",
   },
   {
     dimension: "Marginal fee",
-    psp: "≈ 2.9% + $0.30 per transaction",
-    x402: "Base gas (sub-cent) + facilitator fee",
+    psp: "≈ 2.9% + $0.30",
+    x402: "Base gas + facilitator bps, < 1¢",
   },
   {
-    dimension: "Viable minimum charge",
-    psp: "≈ $0.50 before fees dominate",
-    x402: "$0.0001 (100 atomic USDC units)",
+    dimension: "Min viable charge",
+    psp: "≈ $0.50",
+    x402: "$0.0001 (100 atomic USDC)",
   },
   {
-    dimension: "Settlement finality",
-    psp: "T+1 to T+2 typical; instant payouts add fees",
-    x402: "Seconds, on-chain, deterministic",
+    dimension: "Settlement",
+    psp: "T+1 to T+2",
+    x402: "2-4s, on-chain, deterministic",
   },
   {
     dimension: "Buyer",
-    psp: "Human with stored card credential",
-    x402: "Wallet, frequently an autonomous agent",
+    psp: "Human + stored card",
+    x402: "Wallet (often agent)",
   },
   {
     dimension: "Onboarding",
-    psp: "Merchant account, KYC, underwriting",
+    psp: "Merchant acct, KYC, underwriting",
     x402: "Wallet address + facilitator URL",
   },
   {
-    dimension: "Chargebacks / disputes",
-    psp: "First-class, network-enforced",
-    x402: "None at protocol layer; build separately",
+    dimension: "Chargebacks",
+    psp: "Network-enforced",
+    x402: "None at protocol layer",
   },
   {
     dimension: "Refunds",
-    psp: "Standard via PSP API",
-    x402: "Counter-payment by seller",
+    psp: "PSP API",
+    x402: "Counter-payment",
   },
   {
     dimension: "Subscriptions",
-    psp: "First-class (mandates, tokens-on-file)",
-    x402: "Build separately or use batch-settlement",
+    psp: "First-class",
+    x402: "Batch-settlement or per-call re-auth",
   },
   {
-    dimension: "Compliance burden",
-    psp: "PCI-DSS, PSD2, etc. carried by PSP",
-    x402: "Carried by operator (KYT, sanctions, etc.)",
+    dimension: "Compliance",
+    psp: "PCI / PSD2 on PSP",
+    x402: "KYT / sanctions on operator",
   },
 ];
 
 export function Comparison() {
   return (
-    <section
-      id="compare"
-      className="border-b border-[#0a0e1a]/10"
-    >
-      <div className="max-w-6xl mx-auto px-5 py-14 md:py-20">
-        <div className="flex items-baseline justify-between flex-wrap gap-3 mb-8">
+    <section id="compare" className="border-b border-[var(--x-border)]">
+      <div className="max-w-6xl mx-auto px-5 py-12 md:py-16">
+        <div className="flex items-baseline justify-between flex-wrap gap-3 mb-6">
           <div>
-            <p className="text-[11px] uppercase tracking-[0.18em] text-[#0a0e1a]/55 font-mono mb-3">
-              x402 vs. card-network PSPs
+            <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--x-text-subtle)] font-mono mb-3">
+              vs. card-network PSPs
             </p>
-            <h2 className="font-serif text-3xl md:text-5xl leading-tight tracking-[-0.02em]">
-              Not a Stripe replacement. <em>A different buyer.</em>
+            <h2 className="font-serif text-3xl md:text-5xl leading-tight tracking-[-0.025em] chrome-text">
+              Different buyer. Different math.
             </h2>
           </div>
-          <p className="text-sm text-[#0a0e1a]/65 max-w-md">
-            PSPs remain dominant for consumer checkout, subscriptions, and
-            anything requiring chargebacks. x402 opens unit economics that
-            card-network rails cannot reach.
+          <p className="text-sm text-[var(--x-text-muted)] max-w-md font-mono">
+            PSPs still own consumer checkout, subscriptions, chargebacks.
+            x402 opens unit economics card rails cannot reach.
           </p>
         </div>
 
-        <div className="border border-[#0a0e1a]/15 rounded-lg overflow-x-auto">
-          <table className="w-full text-sm min-w-[680px]">
+        <div className="border border-[var(--x-border-bright)] overflow-x-auto">
+          <table className="w-full text-sm min-w-[680px] font-mono">
             <thead>
-              <tr className="bg-[#0a0e1a] text-[#fbfaf7]">
-                <th className="text-left font-mono text-[11px] uppercase tracking-[0.18em] px-4 py-3 font-normal">
+              <tr className="bg-black text-[var(--x-chrome-2)]">
+                <th className="text-left text-[10px] uppercase tracking-[0.22em] px-4 py-3 font-normal">
                   Dimension
                 </th>
-                <th className="text-left font-mono text-[11px] uppercase tracking-[0.18em] px-4 py-3 font-normal">
+                <th className="text-left text-[10px] uppercase tracking-[0.22em] px-4 py-3 font-normal">
                   Card-network PSP
                 </th>
-                <th className="text-left font-mono text-[11px] uppercase tracking-[0.18em] px-4 py-3 font-normal">
+                <th className="text-left text-[10px] uppercase tracking-[0.22em] px-4 py-3 font-normal">
                   x402
                 </th>
               </tr>
@@ -100,16 +96,18 @@ export function Comparison() {
                 <tr
                   key={row.dimension}
                   className={
-                    idx % 2 === 0 ? "bg-[#fbfaf7]" : "bg-[#f5f1e8]/40"
+                    idx % 2 === 0
+                      ? "bg-[var(--x-bg)]"
+                      : "bg-[var(--x-bg-elevated)]"
                   }
                 >
-                  <td className="px-4 py-3 font-medium align-top">
+                  <td className="px-4 py-2.5 text-[var(--x-text-subtle)] uppercase text-[11px] tracking-[0.18em] align-top">
                     {row.dimension}
                   </td>
-                  <td className="px-4 py-3 text-[#0a0e1a]/75 align-top">
+                  <td className="px-4 py-2.5 text-[var(--x-text-muted)] align-top">
                     {row.psp}
                   </td>
-                  <td className="px-4 py-3 text-[#0a0e1a]/75 align-top">
+                  <td className="px-4 py-2.5 text-[var(--x-text)] align-top">
                     {row.x402}
                   </td>
                 </tr>
@@ -118,10 +116,8 @@ export function Comparison() {
           </table>
         </div>
 
-        <p className="text-xs text-[#0a0e1a]/55 mt-4 italic">
-          Fee figures are illustrative industry ranges, not a quote against any
-          specific PSP contract. Settlement and chargeback behavior vary by
-          card network, region, and merchant category.
+        <p className="text-[11px] text-[var(--x-text-subtle)] mt-3 font-mono italic">
+          Fees illustrative. Real PSP rates vary by MCC, region, contract.
         </p>
       </div>
     </section>
