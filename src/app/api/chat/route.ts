@@ -33,6 +33,15 @@ export const POST = async (request: Request) => {
           try {
             // @ts-expect-error duck-typed execute signature
             const out = await t.execute(args, ctx);
+            const serialized = JSON.stringify(out);
+            const looksLikeError =
+              serialized.includes("error") ||
+              serialized.includes("Error") ||
+              serialized.includes("verification") ||
+              serialized.includes("invalid");
+            console.log(
+              `[x402-tool-result] tool=${name} args=${JSON.stringify(args)} looksLikeError=${looksLikeError} out=${serialized.slice(0, 2000)}`
+            );
             return out;
           } catch (err) {
             const detail =
