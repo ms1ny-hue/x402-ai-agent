@@ -1,24 +1,27 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { Geist, JetBrains_Mono, Fraunces } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import { DisclaimerBar } from "@/components/landing/disclaimer-bar";
+import { LiveTicker } from "@/components/landing/live-ticker";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
+const jetbrainsMono = JetBrains_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  weight: ["400", "500", "700"],
 });
 
-const instrumentSerif = Instrument_Serif({
+const fraunces = Fraunces({
   variable: "--font-serif",
   subsets: ["latin"],
-  weight: "400",
+  weight: ["300", "400", "500", "700"],
   style: ["normal", "italic"],
+  axes: ["opsz", "SOFT"],
 });
 
 export const metadata: Metadata = {
@@ -49,10 +52,11 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} antialiased bg-[var(--x-bg)] text-[var(--x-text)] brushed`}
+        className={`${geistSans.variable} ${jetbrainsMono.variable} ${fraunces.variable} antialiased bg-[var(--x-bg)] text-[var(--x-text)] brushed`}
       >
         <div className="min-h-full flex flex-col">
           <DisclaimerBar />
+          <LiveTicker />
           <header className="sticky top-0 z-40 backdrop-blur-md bg-[var(--x-bg)]/85 border-b border-[var(--x-border)]">
             <div className="max-w-6xl mx-auto flex items-center justify-between px-5 py-3">
               <Link href="/" className="flex items-center gap-2 font-semibold">
