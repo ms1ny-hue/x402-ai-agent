@@ -21,47 +21,10 @@ export const POST = async (request: Request) => {
 
   const tools = await mcpClient.tools();
 
-  // Wrap each tool to log any error to runtime logs, including the
-  // full error body. This is the only way to see facilitator rejection
-  // detail without modifying the x402-mcp library directly.
-  const loggedTools: typeof tools = Object.fromEntries(
-    Object.entries(tools).map(([name, t]) => [
-      name,
-      {
-        ...t,
-        execute: async (args: unknown, ctx: unknown) => {
-          try {
-            // @ts-expect-error duck-typed execute signature
-            const out = await t.execute(args, ctx);
-            const serialized = JSON.stringify(out);
-            const looksLikeError =
-              serialized.includes("error") ||
-              serialized.includes("Error") ||
-              serialized.includes("verification") ||
-              serialized.includes("invalid");
-            console.log(
-              `[x402-tool-result] tool=${name} args=${JSON.stringify(args)} looksLikeError=${looksLikeError} out=${serialized.slice(0, 2000)}`
-            );
-            return out;
-          } catch (err) {
-            const detail =
-              err instanceof Error
-                ? { name: err.name, message: err.message, stack: err.stack }
-                : { raw: String(err) };
-            console.error(
-              `[x402-tool-error] tool=${name} args=${JSON.stringify(args)} err=${JSON.stringify(detail)}`
-            );
-            throw err;
-          }
-        },
-      },
-    ])
-  ) as typeof tools;
-
   const result = streamText({
     model,
     tools: {
-      ...loggedTools,
+      ...tools,
       "format-usdc-atomic": tool({
         description:
           "Convert a USDC amount expressed in 6-decimal atomic units (integer) into a human-readable dollar string.",
