@@ -31,11 +31,15 @@ The whole round trip completes in a few seconds on Base Sepolia.
 | File | Purpose |
 | --- | --- |
 | `src/app/page.tsx` | Composed landing page (server component) |
+| `src/components/landing/disclaimer-bar.tsx` | Persistent top-of-page truth-in-advertising bar |
 | `src/components/landing/hero.tsx` | Hero with editorial typography, stats strip, CTAs |
 | `src/components/landing/how-it-works.tsx` | Three-step protocol explainer with real payloads |
 | `src/components/landing/chat-demo.tsx` | Embedded chat that triggers paid MCP tool calls |
-| `src/components/landing/transaction-feed.tsx` | Live on-chain feed (polls every 15s) |
+| `src/components/landing/transaction-feed.tsx` | Live on-chain feed (polls every 15s) plus proof-of-realness callout and aggregate stats |
+| `src/components/landing/cost-calculator.tsx` | Interactive x402 vs PSP cost comparator |
 | `src/components/landing/comparison.tsx` | PSP vs x402 dimensions table |
+| `src/components/landing/open-questions.tsx` | 10-question FAQ addressing TradFi skeptic objections |
+| `src/components/landing/integration-snippet.tsx` | "Two files, that's the integration" code section |
 | `src/app/mcp/route.ts` | Paid MCP server: research, commentary, mini-backtest, ping |
 | `src/app/api/chat/route.ts` | Chat handler wiring AI SDK to the paid MCP client |
 | `src/app/api/transactions/route.ts` | Server-side RPC query for incoming USDC Transfers to the seller wallet, plus aggregate stats |
