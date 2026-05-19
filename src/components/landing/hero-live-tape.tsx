@@ -54,11 +54,14 @@ export function HeroLiveTape() {
     };
   }, []);
 
-  const totalUsdc = Number(data?.aggregate?.totalUsdc ?? 0);
+  const walletBalance = Number(data?.aggregate?.currentBalanceUsdc ?? 0);
   const txCount = Number(data?.aggregate?.txCount ?? 0);
   const latest = data?.transactions?.[0];
 
-  const animatedTotal = useCountUp(totalUsdc, { duration: 1200, decimals: 3 });
+  const animatedBalance = useCountUp(walletBalance, {
+    duration: 1200,
+    decimals: 3,
+  });
   const animatedCount = useCountUp(txCount, { duration: 900, decimals: 0 });
 
   return (
@@ -69,13 +72,13 @@ export function HeroLiveTape() {
         <div>
           <div className="text-[10px] font-mono uppercase tracking-[0.28em] text-[var(--x-text-subtle)] mb-1.5 flex items-center gap-1.5">
             <span className="w-1 h-1 rounded-full bg-[var(--x-accent-bright)] diode shadow-[0_0_6px_rgba(56,189,248,0.9)]" />
-            settled · 5k blocks
+            agent wallet
           </div>
           <div
             className="font-serif text-2xl md:text-3xl tabular-nums chrome-text leading-none"
             style={{ fontVariationSettings: '"opsz" 144' }}
           >
-            {animatedTotal.toFixed(3)}{" "}
+            {animatedBalance.toFixed(3)}{" "}
             <span className="text-[var(--x-text-subtle)] font-mono text-sm">
               USDC
             </span>
@@ -83,7 +86,7 @@ export function HeroLiveTape() {
         </div>
         <div>
           <div className="text-[10px] font-mono uppercase tracking-[0.28em] text-[var(--x-text-subtle)] mb-1.5">
-            settlements
+            settlements · 28k blocks
           </div>
           <div
             className="font-serif text-2xl md:text-3xl tabular-nums chrome-text leading-none"

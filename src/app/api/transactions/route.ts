@@ -61,10 +61,11 @@ export async function GET() {
     type Transfer = Awaited<ReturnType<typeof fetchWindow>>[number];
 
     // Base Sepolia public RPC caps eth_getLogs at 2000 blocks per call.
-    // Walk backwards in 1900-block chunks to surface roughly the last
-    // hour of activity. Stop once we have 20 transfers or hit 5 chunks.
+    // Walk backwards in 1900-block chunks. 15 chunks ≈ 28,500 blocks ≈
+    // ~16 hours of history on Base, which keeps the feed populated even
+    // when there is a quiet stretch of demo usage.
     const chunkSize = BigInt(1900);
-    const maxChunks = 5;
+    const maxChunks = 15;
     const collected: Transfer[] = [];
     let toBlock = latest;
     for (let i = 0; i < maxChunks && collected.length < 20; i++) {
