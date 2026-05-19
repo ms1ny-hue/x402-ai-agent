@@ -326,6 +326,26 @@
   animation: settlement-pulse 2.2s ease-in-out infinite;
 }
 
+@keyframes sweep {
+  0% {
+    left: -1%;
+    opacity: 0;
+  }
+  3% {
+    opacity: 1;
+  }
+  97% {
+    opacity: 1;
+  }
+  100% {
+    left: 101%;
+    opacity: 0;
+  }
+}
+.sweep-line {
+  animation: sweep 6s linear infinite;
+}
+
 /* Grain overlay — applied to body for tactile, almost-print feel.
    z-index kept low so it never blocks pointer events on real content. */
 body::before {

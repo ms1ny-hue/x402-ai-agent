@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { HandshakeDiagram } from "@/components/landing/handshake-diagram";
+import { TimingDiagram } from "@/components/landing/timing-diagram";
+import { HeroLiveTape } from "@/components/landing/hero-live-tape";
 
 interface HeroProps {
   sellerAddress: string;
@@ -83,8 +84,15 @@ export function Hero({ sellerAddress }: HeroProps) {
             </div>
 
             <div
-              className="flex flex-wrap gap-2 mb-10 stage-item"
+              className="mb-6 stage-item"
               style={{ ["--i" as unknown as string]: 2 }}
+            >
+              <HeroLiveTape />
+            </div>
+
+            <div
+              className="flex flex-wrap gap-2 mb-10 stage-item"
+              style={{ ["--i" as unknown as string]: 3 }}
             >
               <Link
                 href="#demo"
@@ -117,16 +125,16 @@ export function Hero({ sellerAddress }: HeroProps) {
           {/* RIGHT: live handshake showpiece */}
           <div
             className="stage-item lg:sticky lg:top-24"
-            style={{ ["--i" as unknown as string]: 3 }}
+            style={{ ["--i" as unknown as string]: 4 }}
           >
-            <HandshakeDiagram />
+            <TimingDiagram />
           </div>
         </div>
 
         {/* Stat strip spanning full width below */}
         <div
           className="bracket-panel relative mt-10 stage-item"
-          style={{ ["--i" as unknown as string]: 4 }}
+          style={{ ["--i" as unknown as string]: 5 }}
         >
           <span className="bracket-tr" />
           <span className="bracket-bl" />
@@ -159,7 +167,7 @@ export function Hero({ sellerAddress }: HeroProps) {
         </div>
         <p
           className="text-[10px] text-[var(--x-text-subtle)] font-mono mt-4 leading-relaxed stage-item"
-          style={{ ["--i" as unknown as string]: 5 }}
+          style={{ ["--i" as unknown as string]: 6 }}
         >
           ⌗ testnet values free. mainnet ranges shown above. facilitator
           pricing shifts between testnet (free) and mainnet (varies). L1
