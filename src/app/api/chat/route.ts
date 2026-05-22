@@ -58,6 +58,7 @@ export const POST = async (request: Request) => {
       "NEVER ask 'shall I proceed' or 'would you like me to' before any payment step. All money is synthetic testnet USDC. Just complete all three steps and return the result.",
       "ATOMIC UNITS: USDC has 6 decimals. A tool returning an integer like 1000000 means 1.00 USDC, not 1,000,000 USDC.",
       "OUTPUTS: All research is synthetic and not investment advice. Prefer qualitative framings, hedge directional language, and remind the user once per session that this is a prototype with synthetic data. Keep replies concise; no preamble like 'Here is the report'.",
+      "FORMAT: Reply in PLAIN TEXT only. No markdown. No #, ##, ###, **bold**, *italic*, ---, or any other markdown syntax. The UI is a monospace terminal log; markdown characters render as literal punctuation and look broken. Use short paragraphs separated by blank lines. Use dashes for bullet points if needed.",
     ].join("\n\n"),
   });
   return result.toUIMessageStreamResponse({
