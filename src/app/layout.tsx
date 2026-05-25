@@ -123,11 +123,15 @@ export default function RootLayout({
                 </span>
               </div>
               <p className="leading-relaxed max-w-4xl text-[var(--x-text-subtle)]">
-                Prototype output is synthetic and illustrative. Not investment
-                advice, not affiliated with any issuer, employer, or third
-                party. Third-party trademarks used nominatively for context.
-                Some content drafted with AI assistance and reviewed by the
-                author. See the README for the full disclaimer.
+                Personal portfolio prototype by Michael Stanat. Synthetic data;
+                not a regulated product, not financial advice, no real client
+                relationships, no employer affiliation.{" "}
+                <Link
+                  href="/disclaimer"
+                  className="underline decoration-[var(--x-border-bright)] hover:text-[var(--x-accent)]"
+                >
+                  Full disclaimer →
+                </Link>
               </p>
             </div>
           </footer>

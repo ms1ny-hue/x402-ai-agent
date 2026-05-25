@@ -9,7 +9,7 @@ export function DisclaimerBar() {
           </span>
         </div>
         <div className="text-[var(--x-text-subtle)] text-[10.5px]">
-          testnet · no real funds · synthetic research content
+          testnet · no real funds · synthetic research · not investment advice
         </div>
       </div>
     </div>
