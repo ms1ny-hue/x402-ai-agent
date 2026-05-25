@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useChat } from "@ai-sdk/react";
 
 const models = [
@@ -11,16 +11,43 @@ const models = [
   },
 ];
 
-const suggestions: Record<string, string> = {
-  "Equity research · NVDA":
-    "Use the get_equity_research tool to pull a short research note on NVDA.",
-  "Market commentary · semis":
-    "Use the get_market_commentary tool for a one-paragraph qualitative read on the semiconductors sector.",
-  "Mini backtest · AAPL":
-    "Use the run_mini_backtest tool on AAPL with the moving-average-crossover strategy.",
-  "Health check · agent":
-    "Use ping_agent to confirm the seller agent is reachable.",
-};
+interface PresetConfig {
+  label: string;
+  prompt: string;
+  tool:
+    | "get_equity_research"
+    | "get_market_commentary"
+    | "run_mini_backtest"
+    | "ping_agent";
+  args: Record<string, unknown>;
+}
+
+const PRESETS: PresetConfig[] = [
+  {
+    label: "Equity research · NVDA",
+    prompt: "get_equity_research(ticker=NVDA)",
+    tool: "get_equity_research",
+    args: { ticker: "NVDA" },
+  },
+  {
+    label: "Market commentary · semis",
+    prompt: "get_market_commentary(sector=semiconductors)",
+    tool: "get_market_commentary",
+    args: { sector: "semiconductors" },
+  },
+  {
+    label: "Mini backtest · AAPL",
+    prompt: "run_mini_backtest(ticker=AAPL, strategy=moving-average-crossover)",
+    tool: "run_mini_backtest",
+    args: { ticker: "AAPL", strategy: "moving-average-crossover" },
+  },
+  {
+    label: "Health check · agent",
+    prompt: "ping_agent()",
+    tool: "ping_agent",
+    args: {},
+  },
+];
 
 const PAID_TOOL_NAMES = [
   "get_equity_research",
@@ -46,12 +73,105 @@ function nowTime(): string {
   return d.toTimeString().slice(0, 8);
 }
 
+type DirectEntry =
+  | {
+      id: string;
+      ts: number;
+      kind: "user";
+      text: string;
+    }
+  | {
+      id: string;
+      ts: number;
+      kind: "tool-call";
+      toolName: string;
+      input: string;
+      state: "pending" | "settled" | "free";
+    }
+  | {
+      id: string;
+      ts: number;
+      kind: "agent";
+      text: string;
+    }
+  | {
+      id: string;
+      ts: number;
+      kind: "settlement";
+      text: string;
+      txHash?: string;
+      network?: string;
+    }
+  | {
+      id: string;
+      ts: number;
+      kind: "error";
+      text: string;
+    };
+
+interface ToolApiResponse {
+  tool: string;
+  args: Record<string, unknown>;
+  price: { atomic: number; usdc: number };
+  network: string;
+  buyerAddress?: string;
+  paid?: boolean;
+  transactionHash?: string;
+  content?: string;
+  result?: {
+    content?: Array<{ type: string; text: string }>;
+  };
+  elapsedMs?: number;
+}
+
+interface ToolApiError {
+  error: string;
+  message?: string;
+}
+
+function isErrorResponse(j: unknown): j is ToolApiError {
+  return typeof j === "object" && j !== null && "error" in j;
+}
+
+function formatToolResult(json: ToolApiResponse): string {
+  const text = json.content ?? json.result?.content?.[0]?.text;
+  if (!text) return "(no content)";
+  try {
+    const parsed: unknown = JSON.parse(text);
+    return JSON.stringify(parsed, null, 2);
+  } catch {
+    return text;
+  }
+}
+
+function formatSettlement(
+  toolName: string,
+  price: ToolApiResponse["price"],
+  network: string,
+  elapsedMs?: number,
+): string {
+  if (toolName === "ping_agent" || price.atomic === 0) {
+    const networkLabel =
+      network === "base-sepolia" ? "Base Sepolia" : "Base mainnet";
+    const elapsed = elapsedMs != null ? ` (${elapsedMs}ms)` : "";
+    return `Health check returned ok on ${networkLabel}${elapsed}. No payment required.`;
+  }
+  const networkLabel =
+    network === "base-sepolia" ? "Base Sepolia" : "Base mainnet";
+  const usdc = price.usdc.toFixed(3);
+  const atomic = price.atomic.toLocaleString();
+  return `Settled ${usdc} USDC (${atomic} atomic units) on ${networkLabel}.`;
+}
+
 export function ChatDemo() {
   const [input, setInput] = useState("");
   const [model, setModel] = useState<string>(models[0].value);
   const { messages, sendMessage, status } = useChat({
     onError: (error) => console.error(error),
   });
+
+  const [directEntries, setDirectEntries] = useState<DirectEntry[]>([]);
+  const [directBusy, setDirectBusy] = useState(false);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   // Auto-scroll log to bottom as it grows.
@@ -59,7 +179,7 @@ export function ChatDemo() {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages, status]);
+  }, [messages, status, directEntries]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,9 +189,114 @@ export function ChatDemo() {
     }
   };
 
-  const handleSuggestionClick = (suggestion: string) => {
-    sendMessage({ text: suggestions[suggestion] }, { body: { model } });
+  const appendDirect = (entry: DirectEntry) => {
+    setDirectEntries((prev) => [...prev, entry]);
   };
+
+  const runPreset = async (preset: PresetConfig) => {
+    if (directBusy) return;
+    setDirectBusy(true);
+    const baseId = `${preset.tool}-${Date.now()}`;
+    const ts = Date.now();
+    const isPaid = preset.tool !== "ping_agent";
+
+    appendDirect({
+      id: `${baseId}-user`,
+      ts,
+      kind: "user",
+      text: preset.prompt,
+    });
+    appendDirect({
+      id: `${baseId}-call`,
+      ts: ts + 1,
+      kind: "tool-call",
+      toolName: preset.tool,
+      input: JSON.stringify(preset.args),
+      state: isPaid ? "pending" : "free",
+    });
+
+    try {
+      const res = await fetch("/api/run-tool", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ tool: preset.tool, args: preset.args }),
+      });
+      const json: unknown = await res.json();
+      if (!res.ok || isErrorResponse(json)) {
+        const message =
+          isErrorResponse(json) && json.message
+            ? json.message
+            : `HTTP ${res.status}`;
+        appendDirect({
+          id: `${baseId}-err`,
+          ts: Date.now(),
+          kind: "error",
+          text: `tool call failed · ${message}`,
+        });
+        return;
+      }
+
+      const typed = json as ToolApiResponse;
+
+      // Update the prior tool-call entry to settled.
+      setDirectEntries((prev) =>
+        prev.map((entry) =>
+          entry.id === `${baseId}-call` && entry.kind === "tool-call"
+            ? { ...entry, state: isPaid ? "settled" : "free" }
+            : entry,
+        ),
+      );
+
+      appendDirect({
+        id: `${baseId}-result`,
+        ts: Date.now(),
+        kind: "agent",
+        text: formatToolResult(typed),
+      });
+
+      appendDirect({
+        id: `${baseId}-settlement`,
+        ts: Date.now() + 1,
+        kind: "settlement",
+        text: formatSettlement(
+          preset.tool,
+          typed.price,
+          typed.network,
+          typed.elapsedMs,
+        ),
+        txHash: typed.transactionHash,
+        network: typed.network,
+      });
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : String(e);
+      appendDirect({
+        id: `${baseId}-err`,
+        ts: Date.now(),
+        kind: "error",
+        text: `network error · ${message}`,
+      });
+    } finally {
+      setDirectBusy(false);
+    }
+  };
+
+  const isEmpty = messages.length === 0 && directEntries.length === 0;
+
+  // Combined ordered render list of LLM messages (legacy) and direct entries.
+  const renderItems = useMemo(() => {
+    const llmItems = messages.map((m, idx) => ({
+      kind: "llm" as const,
+      ts: idx, // useChat preserves order; treat index as a sort key
+      message: m,
+    }));
+    const directItems = directEntries.map((entry) => ({
+      kind: "direct" as const,
+      ts: entry.ts,
+      entry,
+    }));
+    // direct entries dominate ordering; LLM messages render before all direct entries
+    return [...llmItems, ...directItems];
+  }, [messages, directEntries]);
 
   return (
     <section id="demo" data-reveal className="border-b border-[var(--x-border)]">
@@ -108,117 +333,226 @@ export function ChatDemo() {
               ref={scrollRef}
               className="min-h-[420px] max-h-[640px] overflow-y-auto bg-[var(--x-bg)] font-mono text-[12.5px] leading-relaxed"
             >
-              {messages.length === 0 && (
+              {isEmpty && (
                 <div className="px-4 py-6 text-[var(--x-text-subtle)]">
                   <span className="text-[var(--x-accent)]">$</span> _ awaiting
                   input · click a preset below to issue a paid request.
                 </div>
               )}
 
-              {messages.map((message) => {
-                const paidToolCounts = new Map<string, number>();
-                message.parts.forEach((p) => {
-                  const name = getToolName(p);
-                  if (PAID_TOOL_NAMES.some((n) => name.includes(n))) {
-                    paidToolCounts.set(
-                      name,
-                      (paidToolCounts.get(name) ?? 0) + 1
-                    );
-                  }
-                });
-                const firstSeen = new Set<string>();
-                const role = message.role;
+              {renderItems.map((item) => {
+                if (item.kind === "llm") {
+                  const message = item.message;
+                  const paidToolCounts = new Map<string, number>();
+                  message.parts.forEach((p) => {
+                    const name = getToolName(p);
+                    if (PAID_TOOL_NAMES.some((n) => name.includes(n))) {
+                      paidToolCounts.set(
+                        name,
+                        (paidToolCounts.get(name) ?? 0) + 1,
+                      );
+                    }
+                  });
+                  const firstSeen = new Set<string>();
+                  const role = message.role;
 
+                  return (
+                    <div
+                      key={message.id}
+                      className="px-4 py-2 border-b border-[var(--x-border)]/40 last:border-0"
+                    >
+                      {message.parts.map((part, i) => {
+                        const partTyped = part as MaybeToolPart & {
+                          text?: string;
+                          input?: unknown;
+                        };
+
+                        if (partTyped.type === "text") {
+                          const text = partTyped.text ?? "";
+                          const tag =
+                            role === "user"
+                              ? {
+                                  label: "user",
+                                  cls: "text-[var(--x-chrome-2)]",
+                                }
+                              : {
+                                  label: "agent",
+                                  cls: "text-[var(--x-accent)]",
+                                };
+                          return (
+                            <LogLine
+                              key={`${message.id}-${i}`}
+                              tag={tag.label}
+                              tagCls={tag.cls}
+                              text={text}
+                            />
+                          );
+                        }
+
+                        if (
+                          partTyped.type === "dynamic-tool" ||
+                          partTyped.type?.startsWith("tool-")
+                        ) {
+                          const toolName = getToolName(part);
+                          const isPaidTool = PAID_TOOL_NAMES.some((n) =>
+                            toolName.includes(n),
+                          );
+                          if (
+                            isPaidTool &&
+                            (paidToolCounts.get(toolName) ?? 0) > 1 &&
+                            !firstSeen.has(toolName)
+                          ) {
+                            firstSeen.add(toolName);
+                            return null;
+                          }
+                          return (
+                            <ToolLine
+                              key={`${message.id}-${i}`}
+                              toolName={toolName || partTyped.type || "tool"}
+                              input={
+                                partTyped.input
+                                  ? JSON.stringify(partTyped.input)
+                                  : ""
+                              }
+                              state={partTyped.state ?? "?"}
+                            />
+                          );
+                        }
+
+                        return null;
+                      })}
+                    </div>
+                  );
+                }
+
+                // direct entry
+                const entry = item.entry;
+                if (entry.kind === "user") {
+                  return (
+                    <div
+                      key={entry.id}
+                      className="px-4 py-2 border-b border-[var(--x-border)]/40"
+                    >
+                      <LogLine
+                        tag="user"
+                        tagCls="text-[var(--x-chrome-2)]"
+                        text={entry.text}
+                      />
+                    </div>
+                  );
+                }
+                if (entry.kind === "tool-call") {
+                  return (
+                    <div
+                      key={entry.id}
+                      className="px-4 py-2 border-b border-[var(--x-border)]/40"
+                    >
+                      <ToolLine
+                        toolName={entry.toolName}
+                        input={entry.input}
+                        state={entry.state}
+                      />
+                    </div>
+                  );
+                }
+                if (entry.kind === "agent") {
+                  return (
+                    <div
+                      key={entry.id}
+                      className="px-4 py-2 border-b border-[var(--x-border)]/40"
+                    >
+                      <LogLine
+                        tag="agent"
+                        tagCls="text-[var(--x-accent)]"
+                        text={entry.text}
+                      />
+                    </div>
+                  );
+                }
+                if (entry.kind === "settlement") {
+                  const explorerBase =
+                    entry.network === "base"
+                      ? "https://basescan.org/tx/"
+                      : "https://sepolia.basescan.org/tx/";
+                  const shortHash = entry.txHash
+                    ? `${entry.txHash.slice(0, 10)}…${entry.txHash.slice(-8)}`
+                    : null;
+                  return (
+                    <div
+                      key={entry.id}
+                      className="px-4 py-2 border-b border-[var(--x-border)]/40"
+                    >
+                      <LogLine
+                        tag="settle"
+                        tagCls="text-[var(--x-accent-bright)]"
+                        text={entry.text}
+                      />
+                      {entry.txHash && shortHash && (
+                        <div className="font-mono text-[12px] leading-relaxed flex gap-3 py-0.5 pl-[7.5rem]">
+                          <a
+                            href={`${explorerBase}${entry.txHash}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[var(--x-text-subtle)] hover:text-[var(--x-accent)] underline decoration-dotted"
+                          >
+                            tx {shortHash} ↗
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
                 return (
                   <div
-                    key={message.id}
-                    className="px-4 py-2 border-b border-[var(--x-border)]/40 last:border-0"
+                    key={entry.id}
+                    className="px-4 py-2 border-b border-[var(--x-border)]/40"
                   >
-                    {message.parts.map((part, i) => {
-                      const partTyped = part as MaybeToolPart & {
-                        text?: string;
-                        input?: unknown;
-                      };
-
-                      if (partTyped.type === "text") {
-                        const text = partTyped.text ?? "";
-                        const tag =
-                          role === "user"
-                            ? { label: "user", cls: "text-[var(--x-chrome-2)]" }
-                            : { label: "agent", cls: "text-[var(--x-accent)]" };
-                        return (
-                          <LogLine
-                            key={`${message.id}-${i}`}
-                            tag={tag.label}
-                            tagCls={tag.cls}
-                            text={text}
-                          />
-                        );
-                      }
-
-                      if (
-                        partTyped.type === "dynamic-tool" ||
-                        partTyped.type?.startsWith("tool-")
-                      ) {
-                        const toolName = getToolName(part);
-                        const isPaidTool = PAID_TOOL_NAMES.some((n) =>
-                          toolName.includes(n)
-                        );
-                        if (
-                          isPaidTool &&
-                          (paidToolCounts.get(toolName) ?? 0) > 1 &&
-                          !firstSeen.has(toolName)
-                        ) {
-                          firstSeen.add(toolName);
-                          return null;
-                        }
-                        return (
-                          <ToolLine
-                            key={`${message.id}-${i}`}
-                            toolName={toolName || partTyped.type || "tool"}
-                            input={
-                              partTyped.input
-                                ? JSON.stringify(partTyped.input)
-                                : ""
-                            }
-                            state={partTyped.state ?? "?"}
-                          />
-                        );
-                      }
-
-                      return null;
-                    })}
+                    <LogLine
+                      tag="error"
+                      tagCls="text-amber-300"
+                      text={entry.text}
+                    />
                   </div>
                 );
               })}
 
-              {status === "submitted" && (
+              {(status === "submitted" || directBusy) && (
                 <div className="px-4 py-2 font-mono text-[12px] text-[var(--x-text-subtle)] flex items-center gap-2">
-                  <span className="text-[var(--x-text-subtle)]">[{nowTime()}]</span>
+                  <span className="text-[var(--x-text-subtle)]">
+                    [{nowTime()}]
+                  </span>
                   <span className="text-[var(--x-accent)]">[sys]</span>
                   <span className="inline-block w-2 h-3 bg-[var(--x-accent)] animate-pulse" />
-                  <span>working · network round trip</span>
+                  <span>
+                    {directBusy
+                      ? "signing eip-3009 · awaiting settlement"
+                      : "working · network round trip"}
+                  </span>
                 </div>
               )}
 
               {status === "error" && (
                 <div className="px-4 py-2 font-mono text-[12px] text-amber-300">
-                  <span className="text-[var(--x-text-subtle)]">[{nowTime()}]</span>{" "}
-                  [sys] agent stream errored · check vercel runtime logs
+                  <span className="text-[var(--x-text-subtle)]">
+                    [{nowTime()}]
+                  </span>{" "}
+                  [sys] agent stream errored · free-form chat needs paid AI
+                  Gateway credits. presets above still settle on-chain.
                 </div>
               )}
             </div>
 
             <div className="border-t border-[var(--x-border)] px-3 py-3 bg-[var(--x-bg-elevated)]">
               <div className="flex flex-wrap gap-1.5 mb-2">
-                {Object.keys(suggestions).map((s) => (
+                {PRESETS.map((p) => (
                   <button
-                    key={s}
+                    key={p.label}
                     type="button"
-                    onClick={() => handleSuggestionClick(s)}
-                    className="rounded-sm border border-[var(--x-border-bright)] px-2.5 py-1 text-[10.5px] font-mono uppercase tracking-[0.18em] text-[var(--x-text)] hover:border-[var(--x-accent)] hover:text-[var(--x-accent)] transition-colors"
+                    onClick={() => runPreset(p)}
+                    disabled={directBusy}
+                    className="rounded-sm border border-[var(--x-border-bright)] px-2.5 py-1 text-[10.5px] font-mono uppercase tracking-[0.18em] text-[var(--x-text)] hover:border-[var(--x-accent)] hover:text-[var(--x-accent)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {s}
+                    {p.label}
                   </button>
                 ))}
               </div>
