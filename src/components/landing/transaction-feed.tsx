@@ -200,10 +200,10 @@ export function TransactionFeed() {
           <div className="flex items-center justify-between border-b border-[var(--x-border)] px-4 py-2.5 bg-black text-[var(--x-chrome-2)]">
             <div className="flex items-center gap-2 text-[10.5px] font-mono uppercase tracking-[0.22em]">
               <span className="w-1.5 h-1.5 rounded-full bg-[var(--x-accent-bright)] animate-pulse shadow-[0_0_8px_rgba(56,189,248,0.7)]" />
-              Live · 15s poll
+              Verifiable on-chain log · 15s refresh
             </div>
             <div className="text-[10.5px] font-mono text-[var(--x-text-subtle)]">
-              {data?.transactions.length ?? 0} recent transfers
+              {data?.transactions.length ?? 0} settlements in window
             </div>
           </div>
 
@@ -221,7 +221,20 @@ export function TransactionFeed() {
 
           {!loading && !error && data && data.transactions.length === 0 && (
             <div className="px-4 py-10 text-center text-sm text-[var(--x-text-subtle)] font-mono">
-              No transfers in window. Trigger one in the demo above.
+              No settlements in the last{" "}
+              {data.aggregate
+                ? `${data.aggregate.windowBlocks.toLocaleString()} blocks`
+                : "scanned window"}
+              . Trigger one above; the seller wallet history remains verifiable on{" "}
+              <a
+                href={`https://sepolia.basescan.org/address/${data.sellerAddress}`}
+                target="_blank"
+                rel="noreferrer"
+                className="underline decoration-[var(--x-border-bright)] hover:text-[var(--x-accent)]"
+              >
+                Basescan ↗
+              </a>
+              .
             </div>
           )}
 

@@ -115,7 +115,7 @@ export function HeroLiveTape() {
             </a>
           ) : (
             <div className="font-mono text-sm text-[var(--x-text-subtle)]">
-              awaiting first settlement…
+              none in current window
             </div>
           )}
         </div>

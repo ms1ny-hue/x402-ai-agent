@@ -313,7 +313,8 @@ export function ChatDemo() {
           <p className="text-sm text-[var(--x-text-muted)] max-w-md font-mono">
             Each preset issues a paid MCP request. Server 402 →
             EIP-3009 sign → retry with X-PAYMENT → on-chain settlement
-            → tx hash. End-to-end in 2-4 seconds.
+            → tx hash. Sequencer-confirmed in roughly 2-4 seconds;
+            L1 finality takes longer.
           </p>
         </div>
 

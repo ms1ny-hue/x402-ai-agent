@@ -131,7 +131,7 @@ export function TimingDiagram() {
           <span>
             <span className="text-[var(--x-accent)]">◢</span> 7 events · 3 hops
           </span>
-          <span className="hidden sm:inline">1 signature · 0 buyer gas</span>
+          <span className="hidden sm:inline">1 signature · 0 buyer gas (facilitator pays)</span>
         </div>
         <div className="hidden md:block">net buyer cost · 5,000 atomic</div>
       </div>

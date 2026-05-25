@@ -125,6 +125,15 @@ export function TrustAssumptions() {
           health) but cannot eliminate USDC issuer risk without changing
           the settlement asset entirely.
         </p>
+
+        <p className="text-[11px] text-[var(--x-text-subtle)] mt-3 font-mono leading-relaxed max-w-3xl">
+          Production hardening would also require strict resource binding,
+          nonce tracking, replay prevention, request-payload canonicalization,
+          per-buyer spending limits, and failed-settlement reconciliation.
+          Recent x402 research has documented attack paths around
+          authorization scope, replay handling, and web-layer trust that any
+          live deployment should design against explicitly.
+        </p>
       </div>
     </section>
   );

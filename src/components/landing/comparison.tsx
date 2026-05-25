@@ -13,7 +13,7 @@ const rows: Row[] = [
   {
     dimension: "Marginal fee",
     psp: "≈ 2.9% + $0.30",
-    x402: "Base gas + facilitator bps, < 1¢",
+    x402: "Base gas + facilitator bps; often < 1¢, depends on pricing",
   },
   {
     dimension: "Min viable charge",
@@ -23,7 +23,7 @@ const rows: Row[] = [
   {
     dimension: "Settlement",
     psp: "T+1 to T+2",
-    x402: "2-4s, on-chain, deterministic",
+    x402: "2-4s sequencer-confirmed; L1 final later",
   },
   {
     dimension: "Buyer",

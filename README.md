@@ -46,7 +46,9 @@ The whole round trip completes in a few seconds on Base Sepolia.
 | `src/app/opengraph-image.tsx` | Generated OG image for social sharing |
 | `src/lib/accounts.ts` | CDP server-wallet provisioning + testnet auto-faucet |
 
-## Paid tools exposed by the MCP server
+## Tools exposed by the MCP server
+
+Three paid tools and one free health check.
 
 | Tool | Price | Purpose |
 | --- | --- | --- |
@@ -56,6 +58,8 @@ The whole round trip completes in a few seconds on Base Sepolia.
 | `ping_agent()` | Free | Health check, confirms seller agent and network |
 
 All outputs are synthetic. The named-ticker references are illustrative, not investment views.
+
+Header names in this implementation (`X-PAYMENT`, `X-PAYMENT-RESPONSE`) follow the `x402-mcp` SDK convention used in this deployment. Header naming varies by SDK and protocol version.
 
 ## Notable engineering decisions
 
