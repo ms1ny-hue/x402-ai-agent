@@ -123,9 +123,9 @@
 
 /* x402.demo chrome / steel palette */
 :root {
-  --x-bg: #0a0d14;
-  --x-bg-elevated: #11151e;
-  --x-bg-elevated-2: #181d27;
+  --x-bg: #1a1f2b;
+  --x-bg-elevated: #232936;
+  --x-bg-elevated-2: #2d3441;
   --x-text: #e4e4e7;
   --x-text-muted: #a1a1aa;
   --x-text-subtle: #71717a;
