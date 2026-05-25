@@ -25,8 +25,16 @@ const questions: Question[] = [
     a: "None at the protocol layer. Build an off-chain dispute process if your audience needs one. Agent-to-API contexts typically don't; consumer contexts almost certainly do.",
   },
   {
+    q: "Where does fraud risk actually land?",
+    a: "Card networks externalize fraud through chargebacks. x402 has no chargebacks at the protocol layer, so fraud loss lands on either the seller (who absorbs it) or on a buyer-side reputation primitive that does not yet exist as infrastructure. The interesting design question for productionizing x402 is not whether to bolt on chargebacks (which would break the rail's economics) but who builds the buyer-reputation layer: the facilitator, an indexer, a credit-score-for-agents service, or something none of those. The question matters most at higher tickets, where a single bad buyer can dwarf days of legitimate revenue.",
+  },
+  {
     q: "KYC / AML / sanctions?",
     a: "Not handled by the protocol. Operator must add KYT (Chainalysis, TRM), OFAC-list blocking by address, and adverse-media screening. Same posture as any USDC payments product.",
+  },
+  {
+    q: "Can compliance keep up with 3-second settlement?",
+    a: "The operational bottleneck for productionizing stablecoin-rail payments is not protocol settlement speed; it is the latency of the compliance stack around it. KYT and AML providers run batch screening cycles in the seconds-to-minutes range, sanctions list refreshes are not real-time, and the legal posture of approve-then-screen vs. screen-then-approve differs by jurisdiction. Most live deployments will either accept a brief holdback before treating settlement as final, or pre-clear buyers so the per-call check is a lookup rather than a fresh screen. Either approach adds cost the protocol economics must absorb.",
   },
   {
     q: "Am I a money transmitter if I accept USDC?",

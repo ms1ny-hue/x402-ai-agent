@@ -113,3 +113,14 @@ This is a portfolio prototype. It is not a regulated investment product, financi
 ## Credit
 
 Forked from [`vercel-labs/x402-ai-starter`](https://github.com/vercel-labs/x402-ai-starter) and substantially rewritten as a payments-and-fintech portfolio piece.
+
+**What came from the fork:** the basic scaffold for a Next.js app that wires the AI SDK to an x402-protected MCP server, the seller-wallet auto-faucet idea, and the choice of Coinbase CDP for server-managed wallets.
+
+**What is original to this repository:**
+
+- Editorial landing surface (hero, timing diagram, trust assumptions table, spec sheet, PSP cost comparator, comparison table, 20-question payments FAQ, integration snippet, disclaimer page) and the chrome/steel design system.
+- `/api/run-tool` route that runs the full x402 handshake (402 → sign EIP-3009 → retry with X-PAYMENT) without an LLM in the loop, so preset clicks settle on-chain regardless of AI Gateway availability.
+- Three paid MCP tools with synthetic but deterministic payloads, plus a free `ping_agent` health check, all written for this repository.
+- `/api/transactions` route that paginates `eth_getLogs` over a 28,500-block window and caches with in-flight dedup to avoid public-RPC rate limits.
+- Trust-assumptions framing that names each counterparty, what they can do, and their historical track record — plus the production-hardening paragraph covering resource binding, nonce tracking, replay prevention, payload canonicalization, per-buyer spending limits, and failed-settlement reconciliation.
+- The portfolio-prototype disclaimer page at `/disclaimer`.
