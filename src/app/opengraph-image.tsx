@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
 export const alt =
-  "x402.demo — per-call settlement over plain HTTP";
+  "x402.demo: per-call settlement over plain HTTP";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
