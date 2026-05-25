@@ -314,7 +314,9 @@ export function ChatDemo() {
             Each preset issues a paid MCP request. Server 402 →
             EIP-3009 sign → retry with X-PAYMENT → on-chain settlement
             → tx hash. Sequencer-confirmed in roughly 2-4 seconds;
-            L1 finality takes longer.
+            L1 finality takes longer. Presets call the paid tools
+            directly; the model dropdown adds free-form LLM
+            orchestration on top of the same handshake.
           </p>
         </div>
 

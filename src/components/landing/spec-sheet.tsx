@@ -18,6 +18,12 @@ const rows: SpecRow[] = [
     mainnet: "exact",
     note: "upto, batch-settlement also supported",
   },
+  {
+    k: "request headers",
+    testnet: "X-PAYMENT, X-PAYMENT-RESPONSE",
+    mainnet: "X-PAYMENT, X-PAYMENT-RESPONSE",
+    note: "x402-mcp SDK convention; names vary by SDK and protocol version",
+  },
   { k: "chain", testnet: "base-sepolia", mainnet: "base" },
   { k: "CAIP-2", testnet: "eip155:84532", mainnet: "eip155:8453" },
   {
