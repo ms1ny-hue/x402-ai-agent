@@ -121,31 +121,61 @@
   }
 }
 
-/* x402.demo chrome / steel palette */
+/* ============================================================
+   x402.demo — Capital Markets HUD palette
+   Inspired by trading desks and aerospace telemetry.
+   Deep onyx ground, brushed steel mids, dual signal accents
+   (cool cyan + warm amber), warning red, and matrix green
+   for "settled" confirmations.
+   ============================================================ */
 :root {
-  --x-bg: #2a313d;
-  --x-bg-elevated: #353d4d;
-  --x-bg-elevated-2: #404a5d;
-  --x-text: #e4e4e7;
-  --x-text-muted: #a1a1aa;
-  --x-text-subtle: #71717a;
-  --x-border: #27272a;
-  --x-border-bright: #3f3f46;
-  --x-accent: #7dd3fc;
+  /* Surfaces — deeper, more atmospheric than the prior steel grey */
+  --x-bg:           #0a0d12;
+  --x-bg-deep:      #06080b;
+  --x-bg-elevated:  #11151c;
+  --x-bg-elevated-2:#181d26;
+  --x-bg-panel:     #0d1117;
+
+  /* Text scale */
+  --x-text:         #e6e8ed;
+  --x-text-muted:   #9ba2ad;
+  --x-text-subtle:  #5d6470;
+  --x-text-faint:   #3a3f48;
+
+  /* Borders / rules */
+  --x-border:        #1a1f28;
+  --x-border-bright: #2b323e;
+  --x-border-glow:   rgba(125, 211, 252, 0.18);
+
+  /* Dual-accent system */
+  --x-accent:        #7dd3fc;  /* cool — protocol / "live" */
   --x-accent-bright: #38bdf8;
+  --x-accent-deep:   #0284c7;
+
+  --x-signal:        #fbbf24;  /* warm amber — metric / value */
+  --x-signal-bright: #f59e0b;
+  --x-signal-deep:   #b45309;
+
+  --x-positive:      #34d399;  /* matrix green — settled / ok */
+  --x-negative:      #f87171;  /* warning red — error / down */
+
+  /* Brushed chrome scale (kept) */
   --x-chrome-1: #f4f4f5;
   --x-chrome-2: #d4d4d8;
   --x-chrome-3: #a1a1aa;
   --x-chrome-4: #71717a;
 }
 
+/* ============================================================
+   Typography helpers
+   ============================================================ */
 .chrome-text {
   background: linear-gradient(
     180deg,
-    #f4f4f5 0%,
-    #e4e4e7 30%,
-    #a1a1aa 70%,
-    #d4d4d8 100%
+    #ffffff 0%,
+    #e6e8ed 28%,
+    #a9b0bc 62%,
+    #d4d8df 100%
   );
   -webkit-background-clip: text;
   background-clip: text;
@@ -153,17 +183,74 @@
   color: transparent;
 }
 
+.amber-text {
+  background: linear-gradient(
+    180deg,
+    #fde68a 0%,
+    #fbbf24 45%,
+    #d97706 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.cyan-text {
+  background: linear-gradient(
+    180deg,
+    #bae6fd 0%,
+    #38bdf8 60%,
+    #0369a1 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.mono-cap {
+  font-family: var(--font-geist-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 10px;
+  color: var(--x-text-subtle);
+}
+
+.mono-cap-tight {
+  font-family: var(--font-geist-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 10.5px;
+}
+
+/* ============================================================
+   Surfaces and chrome borders
+   ============================================================ */
 .chrome-border {
   border: 1px solid transparent;
   background:
     linear-gradient(var(--x-bg-elevated), var(--x-bg-elevated)) padding-box,
     linear-gradient(
         140deg,
-        #52525b 0%,
-        #a1a1aa 25%,
-        #3f3f46 55%,
-        #d4d4d8 80%,
-        #52525b 100%
+        #2b323e 0%,
+        #6b7384 25%,
+        #1a1f28 55%,
+        #a9b0bc 80%,
+        #2b323e 100%
+      )
+      border-box;
+}
+
+.signal-border {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--x-bg-elevated), var(--x-bg-elevated)) padding-box,
+    linear-gradient(
+        140deg,
+        rgba(56, 189, 248, 0.45) 0%,
+        rgba(251, 191, 36, 0.35) 50%,
+        rgba(56, 189, 248, 0.45) 100%
       )
       border-box;
 }
@@ -178,19 +265,60 @@
       transparent 3px
     ),
     radial-gradient(
-      circle at top,
-      rgba(125, 211, 252, 0.05) 0%,
-      transparent 55%
+      circle at 12% -8%,
+      rgba(56, 189, 248, 0.10) 0%,
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 88% 110%,
+      rgba(251, 191, 36, 0.06) 0%,
+      transparent 50%
     );
+}
+
+/* Faint engineering grid behind hero surfaces */
+.engineering-grid {
+  background-image:
+    linear-gradient(
+      to right,
+      rgba(125, 211, 252, 0.04) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(125, 211, 252, 0.04) 1px,
+      transparent 1px
+    );
+  background-size: 56px 56px;
 }
 
 .dot-grid {
   background-image: radial-gradient(
-    rgba(228, 228, 231, 0.07) 1px,
+    rgba(228, 228, 231, 0.10) 1px,
     transparent 1px
   );
-  background-size: 16px 16px;
+  background-size: 18px 18px;
   background-position: 0 0;
+}
+
+.cross-grid {
+  background-image:
+    linear-gradient(
+      to right,
+      rgba(228, 228, 231, 0.04) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(228, 228, 231, 0.04) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at center,
+      rgba(56, 189, 248, 0.04) 0%,
+      transparent 60%
+    );
+  background-size: 32px 32px, 32px 32px, 100% 100%;
 }
 
 .scanlines {
@@ -203,14 +331,17 @@
   pointer-events: none;
   background-image: repeating-linear-gradient(
     0deg,
-    rgba(228, 228, 231, 0.02) 0px,
-    rgba(228, 228, 231, 0.02) 1px,
+    rgba(228, 228, 231, 0.025) 0px,
+    rgba(228, 228, 231, 0.025) 1px,
     transparent 1px,
     transparent 3px
   );
   mix-blend-mode: overlay;
 }
 
+/* ============================================================
+   Bracket panels — the precise corner registration marks
+   ============================================================ */
 .bracket-panel {
   position: relative;
 }
@@ -258,10 +389,59 @@
   border-top: 0;
 }
 
+/* Signal-colored bracket variant */
+.bracket-panel-amber::before,
+.bracket-panel-amber::after,
+.bracket-panel-amber > .bracket-tr,
+.bracket-panel-amber > .bracket-bl {
+  border-color: var(--x-signal);
+  opacity: 0.7;
+}
+
+/* ============================================================
+   Tick rulers — small measurement marks along section edges
+   ============================================================ */
+.tick-ruler {
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      var(--x-border-bright) 0,
+      var(--x-border-bright) 1px,
+      transparent 1px,
+      transparent 48px
+    );
+  background-size: 48px 100%;
+  background-position: 0 0;
+  background-repeat: repeat-x;
+}
+
+.tick-ruler-tall {
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      var(--x-border-bright) 0,
+      var(--x-border-bright) 1px,
+      transparent 1px,
+      transparent 192px
+    ),
+    repeating-linear-gradient(
+      to right,
+      var(--x-border) 0,
+      var(--x-border) 1px,
+      transparent 1px,
+      transparent 48px
+    );
+  background-size: 192px 100%, 48px 100%;
+  background-repeat: repeat-x, repeat-x;
+}
+
 .divider-x {
   border-color: var(--x-border);
 }
 
+/* ============================================================
+   Marquee ticker
+   ============================================================ */
 @keyframes ticker-marquee {
   0% {
     transform: translate3d(0, 0, 0);
@@ -277,13 +457,16 @@
   will-change: transform;
 }
 
-/* Respect reduced-motion: kill heavy continuous animations and let
-   the page settle. Keeps the diode pulse subtle for the live indicator. */
+/* Respect reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   .ticker-track,
   .diode,
+  .diode-amber,
   [data-reveal],
-  .stage-item {
+  .stage-item,
+  .sweep-line,
+  .grid-pulse,
+  .hud-blink {
     animation: none !important;
     transition: none !important;
   }
@@ -296,6 +479,9 @@
   }
 }
 
+/* ============================================================
+   Live indicators
+   ============================================================ */
 @keyframes diode-pulse {
   0%, 100% {
     opacity: 1;
@@ -309,6 +495,10 @@
 
 .diode {
   animation: diode-pulse 1.6s ease-in-out infinite;
+}
+
+.diode-amber {
+  animation: diode-pulse 2.4s ease-in-out infinite;
 }
 
 @keyframes settlement-pulse {
@@ -346,25 +536,89 @@
   animation: sweep 6s linear infinite;
 }
 
-/* Grain overlay — applied to body for tactile, almost-print feel.
-   z-index kept low so it never blocks pointer events on real content. */
+@keyframes hud-blink {
+  0%, 60%, 100% { opacity: 1; }
+  70%, 90% { opacity: 0.3; }
+}
+.hud-blink {
+  animation: hud-blink 3.6s ease-in-out infinite;
+}
+
+@keyframes grid-pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 0.85; }
+}
+.grid-pulse {
+  animation: grid-pulse 6s ease-in-out infinite;
+}
+
+/* ============================================================
+   Signal bars (5-segment level indicator)
+   ============================================================ */
+.signal-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+.signal-bars > span {
+  width: 3px;
+  background: var(--x-text-faint);
+  display: block;
+}
+.signal-bars > span:nth-child(1) { height: 25%; }
+.signal-bars > span:nth-child(2) { height: 45%; }
+.signal-bars > span:nth-child(3) { height: 65%; }
+.signal-bars > span:nth-child(4) { height: 80%; }
+.signal-bars > span:nth-child(5) { height: 100%; }
+.signal-bars[data-level="5"] > span {
+  background: var(--x-accent-bright);
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.7);
+}
+.signal-bars[data-level="4"] > span:nth-child(-n+4) {
+  background: var(--x-accent-bright);
+}
+.signal-bars[data-level="3"] > span:nth-child(-n+3) {
+  background: var(--x-signal);
+}
+
+/* ============================================================
+   Grain overlay — slight tactile noise
+   ============================================================ */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 1;
-  opacity: 0.04;
+  opacity: 0.05;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
 
-/* Page-load choreography. Children of .stage with .stage-item get
-   staggered fade-up. Index supplied via inline --i. */
+/* Subtle vignette to focus attention inward */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(
+      ellipse at top,
+      transparent 0%,
+      transparent 50%,
+      rgba(0, 0, 0, 0.35) 100%
+    );
+}
+
+/* ============================================================
+   Page-load choreography
+   ============================================================ */
 @keyframes stage-rise {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
@@ -377,11 +631,65 @@ body::before {
   animation-delay: calc(var(--i, 0) * 80ms);
 }
 
-/* Scroll-reveal: content is visible by default (never hidden behind
-   a JS-only state). The "in" state is reached additively. This keeps
-   the page accessible if JS is slow, fails, or the IntersectionObserver
-   pattern misses an element. */
 [data-reveal] {
   opacity: 1;
   transform: none;
+}
+
+/* ============================================================
+   Numeric typography — tabular, slightly tighter
+   ============================================================ */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+}
+
+.glyph-arrow-up::before {
+  content: "▲";
+  color: var(--x-positive);
+  margin-right: 0.4em;
+  font-size: 0.7em;
+  vertical-align: 0.1em;
+}
+.glyph-arrow-dn::before {
+  content: "▼";
+  color: var(--x-negative);
+  margin-right: 0.4em;
+  font-size: 0.7em;
+  vertical-align: 0.1em;
+}
+.glyph-arrow-flat::before {
+  content: "■";
+  color: var(--x-text-subtle);
+  margin-right: 0.4em;
+  font-size: 0.6em;
+  vertical-align: 0.1em;
+}
+
+/* ============================================================
+   HUD chip — small status pills used in headers
+   ============================================================ */
+.hud-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.2rem 0.55rem;
+  font-family: var(--font-geist-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  border: 1px solid var(--x-border-bright);
+  background: rgba(13, 17, 23, 0.6);
+  color: var(--x-text-muted);
+  backdrop-filter: blur(8px);
+}
+.hud-chip.is-live {
+  color: var(--x-accent);
+  border-color: rgba(56, 189, 248, 0.45);
+  box-shadow: inset 0 0 12px rgba(56, 189, 248, 0.08);
+}
+.hud-chip.is-amber {
+  color: var(--x-signal);
+  border-color: rgba(251, 191, 36, 0.45);
+  box-shadow: inset 0 0 12px rgba(251, 191, 36, 0.08);
 }

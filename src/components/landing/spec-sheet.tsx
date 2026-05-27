@@ -1,3 +1,5 @@
+import { SectionHeader } from "@/components/landing/how-it-works";
+
 interface SpecRow {
   k: string;
   testnet: string;
@@ -116,39 +118,36 @@ const rows: SpecRow[] = [
 
 export function SpecSheet() {
   return (
-    <section id="spec" data-reveal className="border-b border-[var(--x-border)]">
-      <div className="max-w-6xl mx-auto px-5 py-12 md:py-16">
-        <div className="flex items-baseline justify-between flex-wrap gap-3 mb-6">
-          <div>
-            <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--x-text-subtle)] font-mono mb-3">
-              Spec sheet · testnet vs mainnet
-            </p>
-            <h2 className="font-serif text-3xl md:text-5xl leading-tight tracking-[-0.025em] chrome-text">
-              What this deployment actually runs.
-            </h2>
-          </div>
-          <p className="text-sm text-[var(--x-text-muted)] max-w-md font-mono">
-            Every value below is the literal configuration. Testnet column
-            is what is live now. Mainnet column is what changes for
-            production.
-          </p>
-        </div>
+    <section
+      id="spec"
+      data-reveal
+      className="border-b border-[var(--x-border-bright)] relative"
+    >
+      <div className="absolute left-0 right-0 top-0 h-[6px] tick-ruler-tall opacity-50 pointer-events-none" />
 
-        <div className="border border-[var(--x-border-bright)] overflow-x-auto">
+      <div className="max-w-7xl mx-auto px-5 py-14 md:py-20">
+        <SectionHeader
+          eyebrow="Spec sheet · testnet vs mainnet"
+          title="What this deployment"
+          titleAccent="actually runs."
+          rightCopy="Every value below is the literal configuration. Testnet column is what is live now. Mainnet column is what changes for production."
+        />
+
+        <div className="mt-10 border border-[var(--x-border-bright)] chrome-border overflow-x-auto bg-[var(--x-bg-deep)]">
           <table className="w-full text-sm min-w-[820px] font-mono">
             <thead>
-              <tr className="bg-black text-[var(--x-chrome-2)]">
-                <th className="text-left text-[10px] uppercase tracking-[0.22em] px-4 py-3 font-normal w-[200px]">
-                  parameter
+              <tr className="bg-black text-[var(--x-chrome-2)] border-b border-[var(--x-border-bright)]">
+                <th className="text-left text-[10px] uppercase tracking-[0.28em] px-4 py-3 font-normal w-[200px]">
+                  ◇ parameter
                 </th>
-                <th className="text-left text-[10px] uppercase tracking-[0.22em] px-4 py-3 font-normal w-[260px]">
-                  testnet (live)
+                <th className="text-left text-[10px] uppercase tracking-[0.28em] px-4 py-3 font-normal w-[280px]">
+                  <span className="text-[var(--x-accent)]">● testnet (live)</span>
                 </th>
-                <th className="text-left text-[10px] uppercase tracking-[0.22em] px-4 py-3 font-normal w-[260px]">
-                  mainnet (target)
+                <th className="text-left text-[10px] uppercase tracking-[0.28em] px-4 py-3 font-normal w-[280px]">
+                  <span className="text-[var(--x-signal)]">○ mainnet (target)</span>
                 </th>
-                <th className="text-left text-[10px] uppercase tracking-[0.22em] px-4 py-3 font-normal">
-                  note
+                <th className="text-left text-[10px] uppercase tracking-[0.28em] px-4 py-3 font-normal">
+                  ◇ note
                 </th>
               </tr>
             </thead>
@@ -157,19 +156,19 @@ export function SpecSheet() {
                 <tr
                   key={r.k}
                   className={
-                    "border-b border-[var(--x-border)] last:border-0 " +
+                    "border-b border-[var(--x-border)] last:border-0 hover:bg-[var(--x-bg-elevated-2)] transition-colors " +
                     (i % 2 === 0
                       ? "bg-[var(--x-bg)]"
                       : "bg-[var(--x-bg-elevated)]")
                   }
                 >
-                  <td className="px-4 py-2.5 text-[11px] uppercase tracking-[0.18em] text-[var(--x-text-subtle)] align-top">
+                  <td className="px-4 py-2.5 text-[11px] uppercase tracking-[0.22em] text-[var(--x-text-subtle)] align-top">
                     {r.k}
                   </td>
-                  <td className="px-4 py-2.5 text-[var(--x-accent)] align-top">
+                  <td className="px-4 py-2.5 text-[var(--x-accent)] align-top tnum">
                     {r.testnet}
                   </td>
-                  <td className="px-4 py-2.5 text-[var(--x-text)] align-top">
+                  <td className="px-4 py-2.5 text-[var(--x-text)] align-top tnum">
                     {r.mainnet}
                   </td>
                   <td className="px-4 py-2.5 text-[var(--x-text-subtle)] align-top text-[11px]">

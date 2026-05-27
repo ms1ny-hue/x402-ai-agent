@@ -1,3 +1,5 @@
+import { SectionHeader } from "@/components/landing/how-it-works";
+
 interface Row {
   dimension: string;
   psp: string;
@@ -59,35 +61,35 @@ const rows: Row[] = [
 
 export function Comparison() {
   return (
-    <section id="compare" data-reveal className="border-b border-[var(--x-border)]">
-      <div className="max-w-6xl mx-auto px-5 py-12 md:py-16">
-        <div className="flex items-baseline justify-between flex-wrap gap-3 mb-6">
-          <div>
-            <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--x-text-subtle)] font-mono mb-3">
-              vs. card-network PSPs
-            </p>
-            <h2 className="font-serif text-3xl md:text-5xl leading-tight tracking-[-0.025em] chrome-text">
-              Different buyer. Different math.
-            </h2>
-          </div>
-          <p className="text-sm text-[var(--x-text-muted)] max-w-md font-mono">
-            PSPs still own consumer checkout, subscriptions, chargebacks.
-            x402 opens unit economics card rails cannot reach.
-          </p>
-        </div>
+    <section
+      id="compare"
+      data-reveal
+      className="border-b border-[var(--x-border-bright)] relative"
+    >
+      <div className="absolute left-0 right-0 top-0 h-[6px] tick-ruler opacity-50 pointer-events-none" />
 
-        <div className="border border-[var(--x-border-bright)] overflow-x-auto">
+      <div className="max-w-7xl mx-auto px-5 py-14 md:py-20">
+        <SectionHeader
+          eyebrow="vs. card-network PSPs"
+          title="Different buyer."
+          titleAccent="Different math."
+          rightCopy="PSPs still own consumer checkout, subscriptions, chargebacks. x402 opens unit economics card rails cannot reach."
+        />
+
+        <div className="mt-10 border border-[var(--x-border-bright)] chrome-border overflow-x-auto bg-[var(--x-bg-deep)]">
           <table className="w-full text-sm min-w-[680px] font-mono">
             <thead>
-              <tr className="bg-black text-[var(--x-chrome-2)]">
-                <th className="text-left text-[10px] uppercase tracking-[0.22em] px-4 py-3 font-normal">
-                  Dimension
+              <tr className="bg-black text-[var(--x-chrome-2)] border-b border-[var(--x-border-bright)]">
+                <th className="text-left text-[10px] uppercase tracking-[0.28em] px-4 py-3 font-normal">
+                  ◇ Dimension
                 </th>
-                <th className="text-left text-[10px] uppercase tracking-[0.22em] px-4 py-3 font-normal">
-                  Card-network PSP
+                <th className="text-left text-[10px] uppercase tracking-[0.28em] px-4 py-3 font-normal">
+                  <span className="text-[var(--x-text-muted)]">
+                    ○ Card-network PSP
+                  </span>
                 </th>
-                <th className="text-left text-[10px] uppercase tracking-[0.22em] px-4 py-3 font-normal">
-                  x402
+                <th className="text-left text-[10px] uppercase tracking-[0.28em] px-4 py-3 font-normal">
+                  <span className="text-[var(--x-signal)]">● x402</span>
                 </th>
               </tr>
             </thead>
@@ -96,12 +98,13 @@ export function Comparison() {
                 <tr
                   key={row.dimension}
                   className={
-                    idx % 2 === 0
+                    "border-b border-[var(--x-border)] last:border-0 hover:bg-[var(--x-bg-elevated-2)] transition-colors " +
+                    (idx % 2 === 0
                       ? "bg-[var(--x-bg)]"
-                      : "bg-[var(--x-bg-elevated)]"
+                      : "bg-[var(--x-bg-elevated)]")
                   }
                 >
-                  <td className="px-4 py-2.5 text-[var(--x-text-subtle)] uppercase text-[11px] tracking-[0.18em] align-top">
+                  <td className="px-4 py-2.5 text-[var(--x-text-subtle)] uppercase text-[11px] tracking-[0.22em] align-top">
                     {row.dimension}
                   </td>
                   <td className="px-4 py-2.5 text-[var(--x-text-muted)] align-top">
@@ -116,8 +119,8 @@ export function Comparison() {
           </table>
         </div>
 
-        <p className="text-[11px] text-[var(--x-text-subtle)] mt-3 font-mono italic">
-          Fees illustrative. Real PSP rates vary by MCC, region, contract.
+        <p className="text-[10px] text-[var(--x-text-subtle)] mt-3 font-mono uppercase tracking-[0.22em]">
+          ⌗ fees illustrative · real PSP rates vary by MCC, region, contract.
         </p>
       </div>
     </section>

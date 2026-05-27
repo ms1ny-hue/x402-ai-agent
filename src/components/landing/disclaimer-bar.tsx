@@ -1,15 +1,15 @@
 export function DisclaimerBar() {
   return (
-    <div className="bg-black text-[var(--x-chrome-2)] text-[11px] leading-tight font-mono border-b border-[var(--x-border-bright)]">
-      <div className="max-w-6xl mx-auto px-5 py-2 flex flex-wrap items-center gap-x-4 gap-y-1 justify-between">
-        <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-[var(--x-accent-bright)] animate-pulse shadow-[0_0_8px_rgba(56,189,248,0.7)]" />
-          <span className="uppercase tracking-[0.18em] text-[10.5px]">
-            x402 protocol · EIP-3009 · USDC · base-sepolia (eip155:84532)
+    <div className="bg-black text-[var(--x-text-muted)] text-[10.5px] leading-tight font-mono border-b border-[var(--x-border-bright)] relative z-20">
+      <div className="max-w-7xl mx-auto px-5 py-1.5 flex flex-wrap items-center gap-x-5 gap-y-1 justify-between">
+        <div className="flex items-center gap-2 uppercase tracking-[0.22em]">
+          <span className="text-[var(--x-signal)]">⚠</span>
+          <span>
+            portfolio prototype · synthetic data · not regulated · no real funds
           </span>
         </div>
-        <div className="text-[var(--x-text-subtle)] text-[10.5px]">
-          testnet · no real funds · synthetic research · not investment advice
+        <div className="text-[var(--x-text-subtle)] tracking-[0.18em] uppercase">
+          classification · public demo · revision 0.5
         </div>
       </div>
     </div>

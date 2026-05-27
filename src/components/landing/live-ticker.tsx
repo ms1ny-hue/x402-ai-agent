@@ -38,6 +38,7 @@ function age(ts: number | null): string {
 export function LiveTicker() {
   const [txs, setTxs] = useState<TxRecord[]>([]);
   const [total, setTotal] = useState<string>("—");
+  const [count, setCount] = useState<string>("—");
 
   useEffect(() => {
     let cancelled = false;
@@ -49,6 +50,9 @@ export function LiveTicker() {
         setTxs(data.transactions ?? []);
         if (data.aggregate?.totalUsdc) {
           setTotal(Number(data.aggregate.totalUsdc).toFixed(3));
+        }
+        if (typeof data.aggregate?.txCount === "number") {
+          setCount(data.aggregate.txCount.toLocaleString());
         }
       } catch {
         // ignore, ticker just stays static
@@ -76,49 +80,64 @@ export function LiveTicker() {
           },
         ];
 
-  // Duplicate the list so the marquee loop is seamless.
   const looped = [...items, ...items];
 
   return (
-    <div className="border-b border-[var(--x-border)] bg-black text-[var(--x-chrome-2)] overflow-hidden">
+    <div className="border-b border-[var(--x-border-bright)] bg-black text-[var(--x-chrome-2)] overflow-hidden relative z-10">
       <div className="flex items-stretch text-[10.5px] font-mono">
-        <div className="flex items-center gap-2 px-3 border-r border-[var(--x-border-bright)] bg-[var(--x-bg)]">
+        <div className="flex items-center gap-2 px-3 py-1.5 border-r border-[var(--x-border-bright)] bg-[var(--x-bg-deep)]">
           <span className="w-1.5 h-1.5 rounded-full bg-[var(--x-accent-bright)] diode shadow-[0_0_8px_rgba(56,189,248,0.9)]" />
           <span className="uppercase tracking-[0.22em] text-[var(--x-text)]">
-            x402 stream
+            x402&nbsp;stream
           </span>
         </div>
-        <div className="hidden md:flex items-center gap-2 px-3 border-r border-[var(--x-border-bright)]">
+        <div className="hidden md:flex items-center gap-3 px-3 border-r border-[var(--x-border-bright)] bg-[var(--x-bg-deep)]/60">
           <span className="text-[var(--x-text-subtle)] uppercase tracking-[0.22em] text-[9.5px]">
-            settled · 5k blocks
+            settled
           </span>
-          <span className="tabular-nums text-[var(--x-chrome-1)]">
-            {total} USDC
+          <span className="tnum text-[var(--x-signal)]">{total}</span>
+          <span className="text-[var(--x-text-subtle)] text-[9.5px] uppercase tracking-[0.22em]">
+            USDC
+          </span>
+          <span className="text-[var(--x-text-faint)]">·</span>
+          <span className="tnum text-[var(--x-text)]">{count}</span>
+          <span className="text-[var(--x-text-subtle)] text-[9.5px] uppercase tracking-[0.22em]">
+            txns
           </span>
         </div>
         <div className="flex-1 overflow-hidden relative">
-          <div className="ticker-track flex items-center gap-6 py-1.5 pl-6 whitespace-nowrap">
+          <div className="ticker-track flex items-center gap-7 py-1.5 pl-6 whitespace-nowrap">
             {looped.map((tx, i) => (
               <a
                 key={`${tx.txHash}-${i}`}
                 href={`https://sepolia.basescan.org/tx/${tx.txHash}`}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-2 tabular-nums hover:text-[var(--x-accent)]"
+                className="flex items-center gap-2 tnum hover:text-[var(--x-accent)] group"
               >
-                <span className="text-[var(--x-text-subtle)]">{age(tx.timestamp)}</span>
-                <span className="text-[var(--x-text)]">{tx.amountUsdc}</span>
-                <span className="text-[var(--x-text-subtle)]">USDC</span>
-                <span className="text-[var(--x-text-subtle)]">·</span>
-                <span className="text-[var(--x-chrome-3)]">{shortAddr(tx.from)}</span>
-                <span className="text-[var(--x-text-subtle)]">→</span>
-                <span className="text-[var(--x-accent)]">{shortTx(tx.txHash)}</span>
-                <span className="text-[var(--x-text-subtle)] pr-3">⌗</span>
+                <span className="text-[var(--x-text-subtle)] text-[9.5px] uppercase tracking-[0.22em]">
+                  T-{age(tx.timestamp)}
+                </span>
+                <span className="text-[var(--x-signal)] font-medium">
+                  {tx.amountUsdc}
+                </span>
+                <span className="text-[var(--x-text-subtle)] text-[9.5px]">
+                  USDC
+                </span>
+                <span className="text-[var(--x-text-faint)]">/</span>
+                <span className="text-[var(--x-chrome-3)]">
+                  {shortAddr(tx.from)}
+                </span>
+                <span className="text-[var(--x-text-faint)]">→</span>
+                <span className="text-[var(--x-accent)] group-hover:underline">
+                  {shortTx(tx.txHash)}
+                </span>
+                <span className="text-[var(--x-text-faint)] pr-3">⌗</span>
               </a>
             ))}
           </div>
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-black to-transparent" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-black to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-black to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-black to-transparent" />
         </div>
       </div>
     </div>
