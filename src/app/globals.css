@@ -149,10 +149,10 @@
 
   /* Dual-accent system */
   --x-accent:        #7dd3fc;  /* cool — protocol / "live" */
-  --x-accent-bright: #38bdf8;
+  --x-accent-bright: #22d3ee;  /* punchier cyan for highlights */
   --x-accent-deep:   #0284c7;
 
-  --x-signal:        #fbbf24;  /* warm amber — metric / value */
+  --x-signal:        #fcd34d;  /* warmer, brighter amber */
   --x-signal-bright: #f59e0b;
   --x-signal-deep:   #b45309;
 
@@ -692,4 +692,146 @@ body::after {
   color: var(--x-signal);
   border-color: rgba(251, 191, 36, 0.45);
   box-shadow: inset 0 0 12px rgba(251, 191, 36, 0.08);
+}
+
+/* Section bookend — measurement rule with indicator dot, used at the
+   top of each major section for visual rhythm between data dense blocks */
+.section-bookend {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 18px;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+.section-bookend::before {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background:
+    linear-gradient(
+      to right,
+      transparent 0,
+      var(--x-border-bright) 12%,
+      var(--x-border-bright) 88%,
+      transparent 100%
+    );
+}
+.section-bookend > .dot {
+  width: 6px;
+  height: 6px;
+  border: 1px solid var(--x-accent);
+  border-radius: 50%;
+  margin: 0 12px;
+  background: var(--x-bg-deep);
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.45);
+}
+.section-bookend > .dot.amber {
+  border-color: var(--x-signal);
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.45);
+}
+.section-bookend::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background:
+    linear-gradient(
+      to right,
+      transparent 0,
+      var(--x-border-bright) 12%,
+      var(--x-border-bright) 88%,
+      transparent 100%
+    );
+}
+
+/* Gradient sweep accent — for divider bars, button hovers */
+.gradient-sweep {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(56, 189, 248, 0.4) 20%,
+    rgba(251, 191, 36, 0.4) 50%,
+    rgba(56, 189, 248, 0.4) 80%,
+    transparent 100%
+  );
+}
+
+/* Console button — brushed chrome with engraved feel */
+.console-button-primary {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 1.4rem;
+  font-family: var(--font-geist-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  color: #0a0d12;
+  background: linear-gradient(180deg, #f4f4f5 0%, #d4d4d8 45%, #a1a1aa 100%);
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-bottom-color: rgba(0, 0, 0, 0.5);
+  border-radius: 0;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2),
+    0 1px 0 rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
+  transition: transform 120ms ease-out, filter 120ms ease-out;
+}
+.console-button-primary:hover {
+  filter: brightness(1.08) saturate(1.2);
+  background: linear-gradient(
+    180deg,
+    #bae6fd 0%,
+    #38bdf8 50%,
+    #0369a1 100%
+  );
+  color: #0a0d12;
+}
+.console-button-primary:active {
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(0, 0, 0, 0.5);
+}
+
+.console-button-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 1.4rem;
+  font-family: var(--font-geist-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  color: var(--x-text);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.02) 0%,
+    rgba(255, 255, 255, 0.01) 100%
+  );
+  border: 1px solid var(--x-border-bright);
+  border-radius: 0;
+  transition: all 120ms ease-out;
+}
+.console-button-ghost:hover {
+  border-color: var(--x-accent);
+  color: var(--x-accent);
+  background: linear-gradient(
+    180deg,
+    rgba(56, 189, 248, 0.06) 0%,
+    rgba(56, 189, 248, 0.02) 100%
+  );
+}
+.console-button-ghost.is-amber:hover {
+  border-color: var(--x-signal);
+  color: var(--x-signal);
+  background: linear-gradient(
+    180deg,
+    rgba(251, 191, 36, 0.06) 0%,
+    rgba(251, 191, 36, 0.02) 100%
+  );
 }

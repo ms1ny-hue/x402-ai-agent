@@ -1,4 +1,5 @@
 import { Hero } from "@/components/landing/hero";
+import { HeroNumeral } from "@/components/landing/hero-numeral";
 import { HowItWorks } from "@/components/landing/how-it-works";
 import { ChatDemo } from "@/components/landing/chat-demo";
 import { TransactionFeed } from "@/components/landing/transaction-feed";
@@ -26,6 +27,7 @@ export default async function Page() {
   return (
     <>
       <Hero sellerAddress={sellerAddress} />
+      <HeroNumeral />
       <HowItWorks />
       <ChatDemo />
       <TransactionFeed />

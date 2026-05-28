@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { TimingDiagram } from "@/components/landing/timing-diagram";
 import { HeroLiveTape } from "@/components/landing/hero-live-tape";
+import { Waveform, Sparkline } from "@/components/landing/waveform";
 
 interface HeroProps {
   sellerAddress: string;
@@ -12,7 +13,38 @@ export function Hero({ sellerAddress }: HeroProps) {
       {/* layered backgrounds */}
       <div className="absolute inset-0 engineering-grid opacity-70 pointer-events-none grid-pulse" />
       <div className="absolute inset-0 dot-grid opacity-30 pointer-events-none" />
-      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_20%_-10%,rgba(56,189,248,0.18),transparent_55%),radial-gradient(ellipse_at_85%_120%,rgba(251,191,36,0.10),transparent_55%)]" />
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_20%_-10%,rgba(56,189,248,0.22),transparent_55%),radial-gradient(ellipse_at_85%_120%,rgba(251,191,36,0.12),transparent_55%)]" />
+
+      {/* atmospheric waveform behind the headline */}
+      <div className="absolute left-0 right-0 top-[35%] h-[180px] pointer-events-none opacity-50 mix-blend-screen">
+        <Waveform
+          className="w-full h-full"
+          seed={84532}
+          amplitude={0.85}
+          samples={260}
+          stroke="rgba(125, 211, 252, 0.45)"
+          strokeShadow="rgba(56, 189, 248, 0.18)"
+        />
+      </div>
+      <div className="absolute left-0 right-0 top-[55%] h-[120px] pointer-events-none opacity-30 mix-blend-screen">
+        <Waveform
+          className="w-full h-full"
+          seed={2024}
+          amplitude={0.55}
+          samples={180}
+          stroke="rgba(251, 191, 36, 0.4)"
+          strokeShadow="rgba(245, 158, 11, 0.15)"
+        />
+      </div>
+
+      {/* giant watermark rev tag */}
+      <div
+        className="absolute right-[-2vw] top-[8vh] pointer-events-none select-none font-serif italic text-[clamp(8rem,18vw,18rem)] leading-none text-[var(--x-border-bright)] opacity-[0.06] hidden md:block"
+        aria-hidden
+        style={{ fontVariationSettings: '"opsz" 144, "SOFT" 50' }}
+      >
+        x402
+      </div>
 
       {/* corner registration crosshairs */}
       <CornerMark className="top-4 left-4" />
@@ -144,30 +176,28 @@ export function Hero({ sellerAddress }: HeroProps) {
               className="flex flex-wrap gap-2 mb-10 stage-item"
               style={{ ["--i" as unknown as string]: 3 }}
             >
-              <Link
-                href="#demo"
-                className="group relative overflow-hidden rounded-none bg-gradient-to-b from-[var(--x-chrome-1)] via-[var(--x-chrome-2)] to-[var(--x-chrome-4)] text-black px-6 py-3 text-[11px] font-mono uppercase tracking-[0.24em] shadow-[inset_0_1px_0_rgba(255,255,255,0.6),0_1px_0_rgba(0,0,0,0.5)] hover:from-[var(--x-accent)] hover:via-[var(--x-accent-bright)] hover:to-[var(--x-accent-deep)] hover:text-white transition-all"
-              >
-                <span className="relative z-10">Trigger a payment →</span>
+              <Link href="#demo" className="console-button-primary">
+                <span>Trigger a payment</span>
+                <span aria-hidden>→</span>
               </Link>
-              <Link
-                href="#spec"
-                className="rounded-none border border-[var(--x-border-bright)] text-[var(--x-text)] px-6 py-3 text-[11px] font-mono uppercase tracking-[0.24em] hover:border-[var(--x-accent)] hover:text-[var(--x-accent)] transition-colors"
-              >
-                Spec sheet
+              <Link href="#spec" className="console-button-ghost">
+                <span className="text-[var(--x-text-faint)]">◇</span>
+                <span>Spec sheet</span>
               </Link>
               <Link
                 href="#trust"
-                className="rounded-none border border-[var(--x-border-bright)] text-[var(--x-text)] px-6 py-3 text-[11px] font-mono uppercase tracking-[0.24em] hover:border-[var(--x-signal)] hover:text-[var(--x-signal)] transition-colors"
+                className="console-button-ghost is-amber"
               >
-                Trust assumptions
+                <span className="text-[var(--x-text-faint)]">⚠</span>
+                <span>Trust assumptions</span>
               </Link>
               <Link
                 href={`https://sepolia.basescan.org/address/${sellerAddress}`}
                 target="_blank"
-                className="rounded-none border border-[var(--x-border-bright)] text-[var(--x-text-muted)] px-6 py-3 text-[11px] font-mono uppercase tracking-[0.24em] hover:border-[var(--x-accent)] hover:text-[var(--x-accent)] transition-colors"
+                className="console-button-ghost"
               >
-                Seller wallet ↗
+                <span>Seller wallet</span>
+                <span aria-hidden>↗</span>
               </Link>
             </div>
           </div>
@@ -205,6 +235,7 @@ export function Hero({ sellerAddress }: HeroProps) {
               sub="sequencer-confirmed · L2"
               tone="cyan"
               arrow="up"
+              spark={[3.2, 3.1, 2.9, 3.0, 2.8, 2.7, 2.9, 2.6, 2.8, 2.5, 2.8]}
             />
             <Stat
               index="02"
@@ -213,6 +244,7 @@ export function Hero({ sellerAddress }: HeroProps) {
               sub="base gas + bps · facilitator pays"
               tone="amber"
               arrow="flat"
+              spark={[0.0042, 0.0040, 0.0044, 0.0041, 0.0039, 0.0042, 0.0043, 0.0041, 0.0042]}
             />
             <Stat
               index="03"
@@ -221,6 +253,7 @@ export function Hero({ sellerAddress }: HeroProps) {
               sub="EIP-3009 signed off-chain"
               tone="positive"
               arrow="flat"
+              spark={[0, 0, 0, 0, 0, 0, 0, 0, 0]}
             />
             <Stat
               index="04"
@@ -229,6 +262,7 @@ export function Hero({ sellerAddress }: HeroProps) {
               sub="USDC atomic units"
               tone="chrome"
               arrow="flat"
+              spark={[6, 6, 6, 6, 6, 6, 6, 6, 6]}
             />
           </dl>
         </div>
@@ -253,9 +287,10 @@ interface StatProps {
   sub: string;
   tone: "cyan" | "amber" | "positive" | "chrome";
   arrow: "up" | "dn" | "flat";
+  spark: number[];
 }
 
-function Stat({ index, label, value, sub, tone, arrow }: StatProps) {
+function Stat({ index, label, value, sub, tone, arrow, spark }: StatProps) {
   const valueClass =
     tone === "cyan"
       ? "cyan-text"
@@ -264,6 +299,15 @@ function Stat({ index, label, value, sub, tone, arrow }: StatProps) {
         : tone === "positive"
           ? "text-[var(--x-positive)]"
           : "chrome-text";
+
+  const sparkColor =
+    tone === "cyan"
+      ? "rgba(125,211,252,0.85)"
+      : tone === "amber"
+        ? "rgba(251,191,36,0.85)"
+        : tone === "positive"
+          ? "rgba(52,211,153,0.85)"
+          : "rgba(212,212,216,0.65)";
 
   const arrowClass =
     arrow === "up"
@@ -289,6 +333,15 @@ function Stat({ index, label, value, sub, tone, arrow }: StatProps) {
       <dd className="text-[10px] text-[var(--x-text-subtle)] font-mono uppercase tracking-[0.22em] leading-snug">
         {sub}
       </dd>
+      <div className="mt-3 h-[18px]" style={{ color: sparkColor }}>
+        <Sparkline
+          values={spark}
+          width={120}
+          height={18}
+          stroke="currentColor"
+          className="w-full h-full"
+        />
+      </div>
     </div>
   );
 }

@@ -210,6 +210,10 @@ export function TransactionFeed() {
           </>
         )}
 
+        {!loading && !error && data && data.transactions.length > 0 && (
+          <VolumeChart transactions={data.transactions} />
+        )}
+
         <div className="border border-[var(--x-border-bright)] bg-[var(--x-bg-deep)]">
           <div className="flex items-center justify-between border-b border-[var(--x-border-bright)] px-4 py-2.5 bg-black text-[var(--x-chrome-2)]">
             <div className="flex items-center gap-2 text-[10.5px] font-mono uppercase tracking-[0.22em]">
@@ -321,6 +325,104 @@ export function TransactionFeed() {
         </div>
       </div>
     </section>
+  );
+}
+
+function VolumeChart({ transactions }: { transactions: TxRecord[] }) {
+  // Take up to the most recent 32 settlements, in reverse-chronological order;
+  // reverse again so the chart reads left-to-right oldest → newest.
+  const rows = transactions.slice(0, 32).reverse();
+  const max = Math.max(...rows.map((r) => Number(r.amountUsdc) || 0), 0.001);
+  const width = 100; // viewBox units; we use percentage widths via preserveAspectRatio
+  const height = 64;
+  const barCount = rows.length;
+  const slotWidth = barCount > 0 ? width / barCount : width;
+  const gap = barCount > 30 ? 0.4 : 0.7;
+  const barWidth = Math.max(slotWidth - gap, 0.5);
+
+  return (
+    <div className="border border-[var(--x-border-bright)] border-b-0 bg-[var(--x-bg-deep)]">
+      <div className="flex items-center justify-between border-b border-[var(--x-border-bright)] px-4 py-2 bg-black/70 text-[var(--x-chrome-2)]">
+        <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.28em]">
+          <span className="text-[var(--x-signal)]">▦</span>
+          <span>settlement volume · last {barCount}</span>
+        </div>
+        <div className="text-[10px] font-mono uppercase tracking-[0.28em] text-[var(--x-text-subtle)] flex items-center gap-3">
+          <span>
+            peak <span className="tnum text-[var(--x-signal)]">{max.toFixed(3)}</span>{" "}
+            USDC
+          </span>
+        </div>
+      </div>
+      <div className="relative px-3 py-3">
+        <svg
+          viewBox={`0 0 ${width} ${height + 10}`}
+          preserveAspectRatio="none"
+          className="w-full h-[88px]"
+          aria-hidden
+        >
+          {/* baseline + 50%/75% grid lines */}
+          {[0.25, 0.5, 0.75].map((p) => (
+            <line
+              key={p}
+              x1={0}
+              x2={width}
+              y1={height - height * p}
+              y2={height - height * p}
+              stroke="rgba(125,211,252,0.06)"
+              strokeWidth={0.15}
+              strokeDasharray="0.5 1"
+            />
+          ))}
+          <line
+            x1={0}
+            x2={width}
+            y1={height}
+            y2={height}
+            stroke="rgba(125,211,252,0.18)"
+            strokeWidth={0.2}
+          />
+
+          {rows.map((tx, i) => {
+            const v = Number(tx.amountUsdc) || 0;
+            const h = (v / max) * height;
+            const x = i * slotWidth + (slotWidth - barWidth) / 2;
+            const isPeak = v === max;
+            return (
+              <g key={tx.txHash}>
+                <rect
+                  x={x}
+                  y={height - h}
+                  width={barWidth}
+                  height={h || 0.4}
+                  fill={
+                    isPeak
+                      ? "url(#barPeak)"
+                      : "url(#barBase)"
+                  }
+                />
+              </g>
+            );
+          })}
+
+          <defs>
+            <linearGradient id="barBase" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#7dd3fc" stopOpacity="0.95" />
+              <stop offset="100%" stopColor="#0369a1" stopOpacity="0.55" />
+            </linearGradient>
+            <linearGradient id="barPeak" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#fde68a" stopOpacity="1" />
+              <stop offset="100%" stopColor="#b45309" stopOpacity="0.7" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <div className="flex items-center justify-between mt-1 text-[9px] font-mono uppercase tracking-[0.28em] text-[var(--x-text-faint)]">
+          <span>oldest</span>
+          <span>← time →</span>
+          <span>most recent</span>
+        </div>
+      </div>
+    </div>
   );
 }
 
