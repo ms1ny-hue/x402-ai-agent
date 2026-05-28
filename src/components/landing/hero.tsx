@@ -229,7 +229,11 @@ export function Hero({ sellerAddress }: HeroProps) {
             </div>
           </div>
 
-          <dl className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[var(--x-border)] border border-[var(--x-border-bright)] chrome-border">
+          <div
+            role="list"
+            aria-label="Protocol envelope statistics"
+            className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[var(--x-border)] border border-[var(--x-border-bright)] chrome-border"
+          >
             <Stat
               index="01"
               label="end-to-end"
@@ -266,7 +270,7 @@ export function Hero({ sellerAddress }: HeroProps) {
               arrow="flat"
               spark={[6, 6, 6, 6, 6, 6, 6, 6, 6]}
             />
-          </dl>
+          </div>
         </div>
 
         <p
@@ -319,22 +323,25 @@ function Stat({ index, label, value, sub, tone, arrow, spark }: StatProps) {
         : "glyph-arrow-flat";
 
   return (
-    <div className="bg-[var(--x-bg-elevated)] p-5 relative group hover:bg-[var(--x-bg-elevated-2)] transition-colors">
+    <div
+      role="listitem"
+      className="bg-[var(--x-bg-elevated)] p-5 relative group hover:bg-[var(--x-bg-elevated-2)] transition-colors"
+    >
       <div className="absolute top-2 right-3 text-[9px] font-mono text-[var(--x-text-faint)] tnum">
         {index}
       </div>
-      <dt className="text-[9.5px] uppercase tracking-[0.28em] text-[var(--x-text-subtle)] font-mono mb-3">
+      <div className="text-[9.5px] uppercase tracking-[0.28em] text-[var(--x-text-subtle)] font-mono mb-3">
         {label}
-      </dt>
-      <dd
+      </div>
+      <div
         className={`font-serif text-4xl md:text-5xl leading-none mb-2 tnum ${valueClass} ${arrowClass}`}
         style={{ fontVariationSettings: '"opsz" 144', fontWeight: 400 }}
       >
         {value}
-      </dd>
-      <dd className="text-[10px] text-[var(--x-text-subtle)] font-mono uppercase tracking-[0.22em] leading-snug">
+      </div>
+      <div className="text-[10px] text-[var(--x-text-subtle)] font-mono uppercase tracking-[0.22em] leading-snug">
         {sub}
-      </dd>
+      </div>
       <div className="mt-3 h-[18px]" style={{ color: sparkColor }}>
         <Sparkline
           values={spark}

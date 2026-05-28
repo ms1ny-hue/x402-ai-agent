@@ -22,8 +22,14 @@ const jetbrainsMono = JetBrains_Mono({
 const fraunces = Fraunces({
   variable: "--font-serif",
   subsets: ["latin"],
-  style: ["normal", "italic"],
-  axes: ["opsz", "SOFT"],
+  // Drop italic style to save ~120KB of font payload. The few italic
+  // accents in the design use synthesized italic from the variable font,
+  // which is nearly indistinguishable at the sizes we use.
+  style: ["normal"],
+  // Keep only opsz; SOFT axis added marginal expressiveness but inflated
+  // the variable font weight.
+  axes: ["opsz"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -143,11 +149,11 @@ export default function RootLayout({
                   <div className="text-[10px] uppercase tracking-[0.28em] text-[var(--x-text-subtle)] mb-3">
                     Surface
                   </div>
-                  <ul className="space-y-1.5">
+                  <ul className="space-y-2">
                     <li>
                       <Link
                         href="#how"
-                        className="hover:text-[var(--x-accent)]"
+                        className="inline-flex items-center min-h-[24px] py-1 hover:text-[var(--x-accent)]"
                       >
                         Protocol handshake
                       </Link>
@@ -155,7 +161,7 @@ export default function RootLayout({
                     <li>
                       <Link
                         href="#spec"
-                        className="hover:text-[var(--x-accent)]"
+                        className="inline-flex items-center min-h-[24px] py-1 hover:text-[var(--x-accent)]"
                       >
                         Spec sheet
                       </Link>
@@ -163,7 +169,7 @@ export default function RootLayout({
                     <li>
                       <Link
                         href="#payments"
-                        className="hover:text-[var(--x-accent)]"
+                        className="inline-flex items-center min-h-[24px] py-1 hover:text-[var(--x-accent)]"
                       >
                         On-chain settlement log
                       </Link>
@@ -175,11 +181,11 @@ export default function RootLayout({
                   <div className="text-[10px] uppercase tracking-[0.28em] text-[var(--x-text-subtle)] mb-3">
                     External
                   </div>
-                  <ul className="space-y-1.5">
+                  <ul className="space-y-2">
                     <li>
                       <Link
                         href="https://github.com/ms1ny-hue/x402-ai-agent"
-                        className="hover:text-[var(--x-accent)]"
+                        className="inline-flex items-center min-h-[24px] py-1 hover:text-[var(--x-accent)]"
                       >
                         Source on GitHub ↗
                       </Link>
@@ -187,7 +193,7 @@ export default function RootLayout({
                     <li>
                       <Link
                         href="/disclaimer"
-                        className="hover:text-[var(--x-accent)]"
+                        className="inline-flex items-center min-h-[24px] py-1 hover:text-[var(--x-accent)]"
                       >
                         Full disclaimer →
                       </Link>

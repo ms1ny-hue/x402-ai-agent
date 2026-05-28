@@ -571,6 +571,7 @@ export function ChatDemo() {
                   className="flex-1 bg-[var(--x-bg)] border border-[var(--x-border-bright)] rounded-sm px-3 py-2 font-mono text-[12.5px] text-[var(--x-text)] placeholder:text-[var(--x-text-subtle)] focus:outline-none focus:border-[var(--x-accent)]"
                 />
                 <select
+                  aria-label="Select the LLM that orchestrates the agent"
                   value={model}
                   onChange={(e) => setModel(e.target.value)}
                   className="bg-[var(--x-bg)] border border-[var(--x-border-bright)] rounded-sm px-2 py-2 font-mono text-[10.5px] text-[var(--x-text)] focus:outline-none focus:border-[var(--x-accent)]"

@@ -136,11 +136,12 @@
   --x-bg-elevated-2:#181d26;
   --x-bg-panel:     #0d1117;
 
-  /* Text scale */
-  --x-text:         #e6e8ed;
-  --x-text-muted:   #9ba2ad;
-  --x-text-subtle:  #5d6470;
-  --x-text-faint:   #3a3f48;
+  /* Text scale — calibrated for WCAG AA against --x-bg-deep (#06080b)
+     and --x-bg (#0a0d12). subtle/faint were previously below 4.5:1. */
+  --x-text:         #e6e8ed;   /* ~14:1 */
+  --x-text-muted:   #b8bec9;   /* ~9:1 */
+  --x-text-subtle:  #8e96a3;   /* ~5.4:1 — was 3.36 before */
+  --x-text-faint:   #6b7280;   /* ~3.6:1 (decorative only) */
 
   /* Borders / rules */
   --x-border:        #1a1f28;
