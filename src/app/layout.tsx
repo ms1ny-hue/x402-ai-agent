@@ -5,6 +5,8 @@ import Link from "next/link";
 import { DisclaimerBar } from "@/components/landing/disclaimer-bar";
 import { LiveTicker } from "@/components/landing/live-ticker";
 import { SessionBar } from "@/components/landing/session-bar";
+import { SectionNav } from "@/components/landing/section-nav";
+import { TelemetryDock } from "@/components/landing/telemetry-dock";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -113,6 +115,9 @@ export default function RootLayout({
           </header>
 
           <main className="flex-1 relative">{children}</main>
+
+          <SectionNav />
+          <TelemetryDock />
 
           <footer className="border-t border-[var(--x-border-bright)] mt-16 bg-[var(--x-bg-deep)] relative">
             <div className="absolute left-0 right-0 top-0 h-[6px] tick-ruler opacity-40 pointer-events-none" />

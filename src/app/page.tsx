@@ -3,12 +3,14 @@ import { HeroNumeral } from "@/components/landing/hero-numeral";
 import { HowItWorks } from "@/components/landing/how-it-works";
 import { ChatDemo } from "@/components/landing/chat-demo";
 import { TransactionFeed } from "@/components/landing/transaction-feed";
+import { Topology } from "@/components/landing/topology";
 import { SpecSheet } from "@/components/landing/spec-sheet";
 import { TrustAssumptions } from "@/components/landing/trust-assumptions";
 import { CostCalculator } from "@/components/landing/cost-calculator";
 import { Comparison } from "@/components/landing/comparison";
 import { OpenQuestions } from "@/components/landing/open-questions";
 import { IntegrationSnippet } from "@/components/landing/integration-snippet";
+import { ClosingCta } from "@/components/landing/closing-cta";
 import { getOrCreateSellerAccount } from "@/lib/accounts";
 
 export const dynamic = "force-dynamic";
@@ -29,6 +31,7 @@ export default async function Page() {
       <Hero sellerAddress={sellerAddress} />
       <HeroNumeral />
       <HowItWorks />
+      <Topology />
       <ChatDemo />
       <TransactionFeed />
       <SpecSheet />
@@ -37,6 +40,7 @@ export default async function Page() {
       <Comparison />
       <OpenQuestions />
       <IntegrationSnippet />
+      <ClosingCta />
     </>
   );
 }
