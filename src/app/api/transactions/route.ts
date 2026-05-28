@@ -43,45 +43,110 @@ export const revalidate = 0;
 // scan result for a short window so concurrent client polls share one
 // upstream pass instead of triggering rate limits.
 const CACHE_TTL_MS = 20_000;
+// Keep the last successful payload available much longer so that a single
+// RPC hiccup never blanks the live ticker / dock / volume chart. When the
+// fresh scan fails, fall back to this and return 200 with stale=true.
+const STALE_TTL_MS = 10 * 60_000;
+
 interface CachedResponse {
   expiresAt: number;
-  body: unknown;
+  staleUntil: number;
+  body: Record<string, unknown>;
 }
 let cached: CachedResponse | null = null;
-let inflight: Promise<unknown> | null = null;
+let inflight: Promise<Record<string, unknown>> | null = null;
+
+function freshResponse(body: Record<string, unknown>) {
+  return NextResponse.json({ ...body, stale: false });
+}
+
+function staleResponse(body: Record<string, unknown>, reason: string) {
+  return NextResponse.json(
+    {
+      ...body,
+      stale: true,
+      staleReason: reason,
+    },
+    {
+      // 200 so the client treats the payload as usable; the `stale` flag
+      // is for any UI that wants to badge it.
+      status: 200,
+      headers: { "x-cache": "stale" },
+    },
+  );
+}
 
 export async function GET() {
   const now = Date.now();
+
+  // Fresh cache hit: serve immediately.
   if (cached && cached.expiresAt > now) {
-    return NextResponse.json(cached.body);
+    return freshResponse(cached.body);
   }
+
+  // Already a scan in flight: ride along on it.
   if (inflight) {
     try {
       const body = await inflight;
-      return NextResponse.json(body);
+      return freshResponse(body);
     } catch (err) {
       const message = err instanceof Error ? err.message : "unknown error";
-      return NextResponse.json(
-        { error: message, transactions: [] },
-        { status: 500 },
-      );
+      // Fall back to stale cache if we still have one.
+      if (cached && cached.staleUntil > now) {
+        return staleResponse(cached.body, message);
+      }
+      return emptyPayload(message);
     }
   }
 
+  // Kick off a new scan.
   inflight = scanTransfers();
   try {
     const body = await inflight;
-    cached = { expiresAt: Date.now() + CACHE_TTL_MS, body };
-    return NextResponse.json(body);
+    cached = {
+      expiresAt: Date.now() + CACHE_TTL_MS,
+      staleUntil: Date.now() + STALE_TTL_MS,
+      body,
+    };
+    return freshResponse(body);
   } catch (err) {
     const message = err instanceof Error ? err.message : "unknown error";
-    return NextResponse.json(
-      { error: message, transactions: [] },
-      { status: 500 },
-    );
+    // Prefer stale cache over an error response.
+    if (cached && cached.staleUntil > Date.now()) {
+      return staleResponse(cached.body, message);
+    }
+    return emptyPayload(message);
   } finally {
     inflight = null;
   }
+}
+
+// Last resort: no cache at all, RPC is down. Return an empty-but-valid
+// payload so the client UI shows the empty state instead of an error.
+function emptyPayload(reason: string) {
+  return NextResponse.json(
+    {
+      sellerAddress: "",
+      network: "eip155:84532",
+      networkName: "base-sepolia",
+      asset: "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+      assetSymbol: "USDC",
+      assetDecimals: 6,
+      aggregate: {
+        txCount: 0,
+        totalAtomic: "0",
+        totalUsdc: "0",
+        distinctBuyers: 0,
+        currentBalanceAtomic: "0",
+        currentBalanceUsdc: "0",
+        windowBlocks: 28500,
+      },
+      transactions: [],
+      stale: true,
+      staleReason: reason,
+    },
+    { status: 200, headers: { "x-cache": "miss" } },
+  );
 }
 
 async function scanTransfers() {
