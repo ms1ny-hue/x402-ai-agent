@@ -28,21 +28,21 @@ const fraunces = Fraunces({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://x402-ai-agent-zeta.vercel.app"),
-  title: "x402.demo: payment rails for software, not for humans with cards",
+  title: "Agentic Payment Rails Prototype: x402 Protocol",
   description:
-    "A working portfolio prototype where an AI agent pays a research API in stablecoin per call, in seconds, for fractions of a cent. Built on x402, EIP-3009, USDC on Base Sepolia. Synthetic data, not investment advice.",
+    "A working prototype of the x402 protocol: an AI agent pays a research API in USDC, per call, in seconds, for fractions of a cent. Built on EIP-3009 and USDC on Base Sepolia.",
   openGraph: {
-    title: "x402.demo: payment rails for software, not for humans with cards",
+    title: "Agentic Payment Rails Prototype: x402 Protocol",
     description:
-      "An AI agent paying an API in stablecoin per call, over HTTP, on Base Sepolia. Portfolio prototype by Michael Stanat.",
+      "An AI agent paying an API in USDC per call. x402 + EIP-3009 + USDC on Base Sepolia. Per-call settlement in seconds for fractions of a cent.",
     type: "website",
     url: "https://x402-ai-agent-zeta.vercel.app",
   },
   twitter: {
     card: "summary_large_image",
-    title: "x402.demo: payment rails for software",
+    title: "Agentic Payment Rails Prototype: x402 Protocol",
     description:
-      "AI agent paying an API in stablecoin per call, over HTTP, on Base Sepolia.",
+      "An AI agent paying an API in USDC per call. x402 + EIP-3009 on Base Sepolia.",
   },
 };
 

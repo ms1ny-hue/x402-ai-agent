@@ -111,34 +111,36 @@ export function Hero({ sellerAddress }: HeroProps) {
                   fontWeight: 400,
                 }}
               >
-                <span className="chrome-text">Per-call</span>
+                <span className="chrome-text">Agentic</span>
                 <br />
-                <span className="amber-text">settlement,</span>
+                <span className="amber-text">payment rails.</span>
                 <br />
                 <span
                   className="italic text-[var(--x-text-muted)] font-normal"
                   style={{ fontVariationSettings: '"opsz" 144, "SOFT" 50' }}
                 >
-                  over plain
+                  Stablecoin,
                 </span>{" "}
                 <span
                   className="not-italic chrome-text"
                   style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
                 >
-                  HTTP.
+                  per call.
                 </span>
               </h1>
 
               <p className="text-sm md:text-[15px] text-[var(--x-text-muted)] leading-[1.65] mt-6 max-w-[58ch]">
-                Buyer hits a paid endpoint. Server returns{" "}
+                A working prototype of the{" "}
+                <span className="text-[var(--x-text)]">x402 protocol</span>:
+                an AI agent pays a research API in USDC, per call, in
+                seconds, for fractions of a cent. Server returns{" "}
                 <code className="text-[var(--x-accent)] font-mono">402</code>{" "}
                 with an{" "}
                 <code className="text-[var(--x-accent)] font-mono">
                   accepts
                 </code>{" "}
-                array. Buyer signs an EIP-3009 USDC authorization off-chain.
-                Facilitator verifies and broadcasts the on-chain settlement.
-                Resource returned with the tx hash.{" "}
+                envelope. Buyer signs an EIP-3009 USDC authorization
+                off-chain. Facilitator settles on-chain.{" "}
                 <span className="text-[var(--x-text)]">
                   No card. No merchant account. No checkout.
                 </span>
